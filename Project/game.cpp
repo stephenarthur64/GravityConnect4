@@ -14,42 +14,55 @@ void Game::Draw()
 
 void Game::Update()
 {
+    bool placed = false;
+
     if (IsKeyReleased(KEY_ONE))
     {
         board.PlaceChip(0, currentPlayer);
+        placed = true;
     }
     if (IsKeyReleased(KEY_TWO))
     {
         board.PlaceChip(1, currentPlayer);
+        placed = true;
     }
     if (IsKeyReleased(KEY_THREE))
     {
         board.PlaceChip(2, currentPlayer);
+        placed = true;
+
     }
     if (IsKeyReleased(KEY_FOUR))
     {
         board.PlaceChip(3, currentPlayer);
+        placed = true;
     }
     if (IsKeyReleased(KEY_FIVE))
     {
         board.PlaceChip(4, currentPlayer);
+        placed = true;
     }
     if (IsKeyReleased(KEY_SIX))
     {
         board.PlaceChip(5, currentPlayer);
+        placed = true;
     }
     if (IsKeyReleased(KEY_SEVEN))
     {
         board.PlaceChip(6, currentPlayer);
+        placed = true;
     }
 
-    if (IsKeyReleased(KEY_R))
+    if (placed)
     {
-        currentPlayer = Team::Red;
-    }
-    else if (IsKeyReleased(KEY_Y))
-    {
-        currentPlayer = Team::Yellow;
+        if (currentPlayer == Team::Red)
+        {
+            currentPlayer = Team::Yellow;
+        }
+        else if (currentPlayer == Team::Yellow)
+        {
+            currentPlayer = Team::Red;
+        }
     }
 
     if (IsKeyReleased(KEY_Q))
@@ -58,4 +71,17 @@ void Game::Update()
     }
 
     board.Update();
+
+    switch (currentPlayer)
+    {
+    case Team::Red:
+        DrawText("Turn Red", GetScreenWidth() / 2.0f, 20, 20, RED);
+        break;
+    case Team::Yellow:
+        DrawText("Turn Yellow", GetScreenWidth() / 2.0f, 20, 20, YELLOW);
+        break;
+    default:
+        break;
+    }
+
 }
