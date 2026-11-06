@@ -120,6 +120,9 @@ void Board::PlaceChip(int t_slot, Team t_team)
 		if (!ValidChipPlacement(tempX + downDirection.x, tempY + downDirection.y))
 		{
 			board[tempX][tempY].SetTeam(t_team);
+
+			if (CheckForWin({ (float)lastX, (float)lastY }, t_team))
+				std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
 		}
 
 		lastX = tempX;
@@ -234,6 +237,7 @@ bool Board::ColLimitCheck(int t_col)
 
 bool Board::CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam)
 {
+	std::cout << "Drop Y: " << t_dropIndex.y << "\n";
 	// Error Checking
 	if (t_dropIndex.x >= COL_MAX || t_dropIndex.x < 0)
 		return false;
@@ -258,35 +262,33 @@ bool Board::CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam)
 bool Board::CheckHorizontal(Vector2 t_dropIndex, Team t_droppedTeam)
 {
 	// Horizontal Check (Positive)
-	int winCondition = t_dropIndex.x + WIN_CONDITION;
-	for (int x = t_dropIndex.x; x < winCondition; x++)
+	int winCondition = t_dropIndex.x + WIN_CONDITION - 1;
+	if (winCondition < COL_MAX)
 	{
-		// Check if out of range
-		if (x >= COL_MAX)
-			break;
+		for (int x = t_dropIndex.x; x <= winCondition; x++)
+		{
+			if (board[x][(int)t_dropIndex.y].GetTeam() != t_droppedTeam)
+				break; // Not the same team
 
-		if (board[x][(int)t_dropIndex.y].GetTeam() != t_droppedTeam)
-			break; // Not the same team
-
-		// If you reached goal
-		if (x >= winCondition - 1)
-			return true;
+			// If you reached goal
+			if (x == winCondition)
+				return true;
+		}
 	}
 
 	// Horizontal Check (Negative)
-	winCondition = t_dropIndex.x - WIN_CONDITION;
-	for (int x = t_dropIndex.x; x < winCondition; x--)
+	winCondition = t_dropIndex.x - WIN_CONDITION + 1;
+	if (winCondition >= 0)
 	{
-		// Check if out of range
-		if (x < 0)
-			break;
+		for (int x = (int)t_dropIndex.x; x >= winCondition; x--)
+		{
+			if (board[x][(int)t_dropIndex.y].GetTeam() != t_droppedTeam)
+				break; // Not the same team
 
-		if (board[x][(int)t_dropIndex.y].GetTeam() != t_droppedTeam)
-			break; // Not the same team
-
-		// If you reached goal
-		if (x >= winCondition + 1)
-			return true;
+			// If you reached goal
+			if (x == winCondition)
+				return true;
+		}
 	}
 
 	return false;
