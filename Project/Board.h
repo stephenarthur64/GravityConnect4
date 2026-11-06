@@ -23,14 +23,20 @@ public:
 	bool RowLimitCheck(int t_row);
 	bool ColLimitCheck(int t_col);
 
+
 	void PlaceChip(int t_slot, Team t_team);
 	void Rotate();
 	void FallChips();
 
 private:
-	static const int ROW_MAX = 7;
-	static const int COL_MAX = 6;
-	Chip board[ROW_MAX][COL_MAX];
+	bool CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam);
+	bool CheckHorizontal(Vector2 t_dropIndex, Team t_droppedTeam);
+	bool CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam);
+	bool CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam);
+
+	static const int COL_MAX = 7;
+	static const int ROW_MAX = 6;
+	Chip board[COL_MAX][ROW_MAX];
 	int turn;
 	static const int ROTATE_TURN = 4;
 	Vector2 downDirection = { 0.0f, 1.0f };
@@ -45,6 +51,7 @@ private:
 	int indexDirectionY = 1;
 
 	Vector2 directionIndicator;
+	static const int WIN_CONDITION = 4;
 
 	Rectangle rect;
 };
