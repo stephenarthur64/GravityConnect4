@@ -1,4 +1,5 @@
 #pragma once
+#include "Board.h"
 
 class Game
 {
@@ -8,4 +9,6 @@ public:
     void Update();
 
 private:
+    Board board;
+    Team currentPlayer = Team::Red;
 };

@@ -17,7 +17,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Raylib StarterKit GPPI");
     // ToggleFullscreen();
 
-    SetExitKey(KEY_L);
+    SetExitKey(KEY_ESCAPE);
 
     // Initialise Game
     game.Init();
