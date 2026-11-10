@@ -34,6 +34,8 @@ private:
 	bool CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam);
 	bool CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam);
 
+	void WholeBoardCheck();
+
 	static const int COL_MAX = 7;
 	static const int ROW_MAX = 6;
 	Chip board[COL_MAX][ROW_MAX];

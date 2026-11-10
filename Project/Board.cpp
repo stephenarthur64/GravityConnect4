@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <map>
 
 Board::Board() : turn(0)
 {
@@ -182,6 +183,8 @@ void Board::Rotate()
 	}
 
 	FallChips();
+
+	WholeBoardCheck();
 }
 
 
@@ -347,6 +350,36 @@ bool Board::CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam)
 	}
 
 	return false;
+}
+
+void Board::WholeBoardCheck()
+{
+	std::map<Team, int> winCount;
+
+	for (int row = 0; row < ROW_MAX; row++)
+	{
+		for (int col = 0; col < COL_MAX; col++)
+		{
+			Team teamChecked = board[row][col].GetTeam();;
+			if (CheckForWin({ (float)row, (float)col }, teamChecked))
+			{
+				winCount[teamChecked]++;
+			}
+		}
+	}
+
+	int highestNumAmount = 999;
+	Team teamWithMostWins = Team::None;
+	for (const auto& pair : winCount)
+	{
+		if (pair.second < highestNumAmount)
+		{
+			highestNumAmount = pair.second;
+			teamWithMostWins = pair.first;
+		}
+	}
+
+	std::cout << "Team with more wins is: " << static_cast<int>(teamWithMostWins) << std::endl;
 }
 
 void Board::FallChips()
