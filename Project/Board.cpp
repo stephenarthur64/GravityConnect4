@@ -121,7 +121,7 @@ void Board::PlaceChip(int t_slot, Team t_team)
 		{
 			board[tempX][tempY].SetTeam(t_team);
 
-			if (CheckForWin({ (float)lastX, (float)lastY }, t_team))
+			if (CheckForWin({ (float)tempX, (float)tempY }, t_team))
 				std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
 		}
 
@@ -261,34 +261,21 @@ bool Board::CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam)
 
 bool Board::CheckHorizontal(Vector2 t_dropIndex, Team t_droppedTeam)
 {
-	// Horizontal Check (Positive)
-	int winCondition = t_dropIndex.x + WIN_CONDITION - 1;
-	if (winCondition < COL_MAX)
+	int rowToCheck = t_dropIndex.y;
+
+	int counter = 0;
+	for (int x = 0; x < COL_MAX; x++)
 	{
-		for (int x = t_dropIndex.x; x <= winCondition; x++)
+		if (board[x][rowToCheck].GetTeam() != t_droppedTeam)
 		{
-			if (board[x][(int)t_dropIndex.y].GetTeam() != t_droppedTeam)
-				break; // Not the same team
-
-			// If you reached goal
-			if (x == winCondition)
-				return true;
+			counter = 0;
+			continue;
 		}
-	}
 
-	// Horizontal Check (Negative)
-	winCondition = t_dropIndex.x - WIN_CONDITION + 1;
-	if (winCondition >= 0)
-	{
-		for (int x = (int)t_dropIndex.x; x >= winCondition; x--)
-		{
-			if (board[x][(int)t_dropIndex.y].GetTeam() != t_droppedTeam)
-				break; // Not the same team
+		counter++;
 
-			// If you reached goal
-			if (x == winCondition)
-				return true;
-		}
+		if (counter >= WIN_CONDITION)
+			return true;
 	}
 
 	return false;
@@ -296,35 +283,20 @@ bool Board::CheckHorizontal(Vector2 t_dropIndex, Team t_droppedTeam)
 
 bool Board::CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam)
 {
-	// Vertical Check (Positive)
-	int winCondition = t_dropIndex.y + WIN_CONDITION;
-	for (int y = t_dropIndex.y; y < winCondition; y++)
+	int colToCheck = t_dropIndex.x;
+
+	int counter = 0;
+	for (int y = 0; y < ROW_MAX; y++)
 	{
-		// Check if out of range
-		if (y >= ROW_MAX)
-			break;
+		if (board[colToCheck][y].GetTeam() != t_droppedTeam)
+		{
+			counter = 0;
+			continue;
+		}
 
-		if (board[(int)t_dropIndex.x][y].GetTeam() != t_droppedTeam)
-			break; // Not the same team
+		counter++;
 
-		// If you reached goal
-		if (y >= winCondition - 1)
-			return true;
-	}
-
-	// Vertical Check (Negative)
-	winCondition = t_dropIndex.y - WIN_CONDITION;
-	for (int y = t_dropIndex.y; y < winCondition; y--)
-	{
-		// Check if out of range
-		if (y < 0)
-			break;
-
-		if (board[(int)t_dropIndex.x][y].GetTeam() != t_droppedTeam)
-			break; // Not the same team
-
-		// If you reached goal
-		if (y >= winCondition + 1)
+		if (counter >= WIN_CONDITION)
 			return true;
 	}
 
@@ -333,6 +305,47 @@ bool Board::CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam)
 
 bool Board::CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam)
 {
+	// Right and left directions
+	for (int dir = -1; dir <= 1; dir += 2)
+	{
+		int counter = 1;
+
+		// Check right
+		for (int s = 1; s < WIN_CONDITION; s++)
+		{
+			int x = t_dropIndex.x + s;
+			int y = t_dropIndex.y + s * dir;
+
+			// Bounds check
+			if (x < 0 || x >= COL_MAX || y < 0 || y >= ROW_MAX)
+				break;
+
+			if (board[x][y].GetTeam() != t_droppedTeam)
+				break;
+
+			counter++;
+		}
+
+		// Check left
+		for (int s = 1; s < WIN_CONDITION; s++)
+		{
+			int x = t_dropIndex.x - s;
+			int y = t_dropIndex.y - s * dir;
+
+			// Bounds check
+			if (x < 0 || x >= COL_MAX || y < 0 || y >= ROW_MAX)
+				break;
+
+			if (board[x][y].GetTeam() != t_droppedTeam)
+				break;
+
+			counter++;
+		}
+
+		if (counter >= WIN_CONDITION)
+			return true;
+	}
+
 	return false;
 }
 
