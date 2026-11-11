@@ -355,31 +355,41 @@ bool Board::CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam)
 void Board::WholeBoardCheck()
 {
 	std::map<Team, int> winCount;
-
+	int totalWins = 0;
 	for (int row = 0; row < ROW_MAX; row++)
 	{
 		for (int col = 0; col < COL_MAX; col++)
 		{
-			Team teamChecked = board[row][col].GetTeam();;
+			Team teamChecked = board[row][col].GetTeam();
+			// Dont count empty slots
+			if (teamChecked == Team::None)
+				continue;
+
 			if (CheckForWin({ (float)row, (float)col }, teamChecked))
 			{
 				winCount[teamChecked]++;
+				totalWins++;
 			}
 		}
 	}
 
-	int highestNumAmount = 999;
-	Team teamWithMostWins = Team::None;
-	for (const auto& pair : winCount)
-	{
-		if (pair.second < highestNumAmount)
-		{
-			highestNumAmount = pair.second;
-			teamWithMostWins = pair.first;
-		}
-	}
+	// No wins found
+	if (totalWins == 0)
+		return;
 
-	std::cout << "Team with more wins is: " << static_cast<int>(teamWithMostWins) << std::endl;
+	// Print what team won
+	if (winCount[Team::Red] == winCount[Team::Yellow])
+	{
+		std::cout << "Draw" << std::endl;
+	}
+	else if (winCount[Team::Red] > winCount[Team::Yellow])
+	{
+		std::cout << "Team with more wins is: Red" << std::endl;
+	}
+	else
+	{
+		std::cout << "Team with more wins is: Yellow" << std::endl;
+	}
 }
 
 void Board::FallChips()
