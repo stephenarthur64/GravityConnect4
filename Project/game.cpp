@@ -3,58 +3,48 @@
 
 void Game::Init()
 {
+    camera.rotation = 0.0f;
+    camera.target = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
+    camera.zoom = 1.0f;
+    camera.offset = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
     board.Init();
+    turn = 0;
 }
 
 void Game::Draw()
 {
     DrawFPS(0, 0);
+
+    BeginMode2D(camera);
+
     board.Draw();
+
+    EndMode2D();
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
+        {
+            placed = board.PlaceChip(i, currentPlayer);
+        }
+    }
 }
 
 void Game::Update()
 {
-    bool placed = false;
-
-    if (IsKeyReleased(KEY_ONE))
+    if (turn % 4 == 0 && turn > 0)
     {
-        board.PlaceChip(0, currentPlayer);
-        placed = true;
-    }
-    if (IsKeyReleased(KEY_TWO))
-    {
-        board.PlaceChip(1, currentPlayer);
-        placed = true;
-    }
-    if (IsKeyReleased(KEY_THREE))
-    {
-        board.PlaceChip(2, currentPlayer);
-        placed = true;
-
-    }
-    if (IsKeyReleased(KEY_FOUR))
-    {
-        board.PlaceChip(3, currentPlayer);
-        placed = true;
-    }
-    if (IsKeyReleased(KEY_FIVE))
-    {
-        board.PlaceChip(4, currentPlayer);
-        placed = true;
-    }
-    if (IsKeyReleased(KEY_SIX))
-    {
-        board.PlaceChip(5, currentPlayer);
-        placed = true;
-    }
-    if (IsKeyReleased(KEY_SEVEN))
-    {
-        board.PlaceChip(6, currentPlayer);
-        placed = true;
+        if (rotating)
+        {
+            board.Rotate();
+            camera.rotation += 90.0f;
+        }
+        turn++;
     }
 
     if (placed)
     {
+        turn++;
         if (currentPlayer == Team::Red)
         {
             currentPlayer = Team::Yellow;
@@ -63,11 +53,12 @@ void Game::Update()
         {
             currentPlayer = Team::Red;
         }
+        placed = false;
     }
 
     if (IsKeyReleased(KEY_Q))
     {
-        board.Rotate();
+        rotating = !rotating;
     }
 
     board.Update();
@@ -75,10 +66,10 @@ void Game::Update()
     switch (currentPlayer)
     {
     case Team::Red:
-        DrawText("Turn Red", GetScreenWidth() / 2.0f, 20, 20, RED);
+        DrawText("Turn Red", GetScreenWidth() - 140.0f, 20, 20, RED);
         break;
     case Team::Yellow:
-        DrawText("Turn Yellow", GetScreenWidth() / 2.0f, 20, 20, YELLOW);
+        DrawText("Turn Yellow", GetScreenWidth() - 140.0f, 20, 20, YELLOW);
         break;
     default:
         break;

@@ -23,8 +23,7 @@ public:
 	bool RowLimitCheck(int t_row);
 	bool ColLimitCheck(int t_col);
 
-
-	void PlaceChip(int t_slot, Team t_team);
+	bool PlaceChip(int t_slot, Team t_team);
 	void Rotate();
 	void FallChips();
 

@@ -1,6 +1,6 @@
 #include "Board.h"
 
-Board::Board() : turn(0)
+Board::Board() : directionIndicator({0.0f, 0.0f}), rect({0.0f, 0.0f, 0.0f, 0.0f})
 {
 }
 
@@ -29,6 +29,12 @@ void Board::Init()
 			board[row][col].SetPos(chipPos);
 		}
 	}
+
+	indexDirectionX = -1;
+	indexDirectionY = -1;
+	rowStart = ROW_MAX - 1;
+	colStart = COL_MAX - 1;
+	directionIndicator = { GetScreenWidth() / 2.0f, GetScreenHeight() - 20.0f };
 }
 
 void Board::Update()
@@ -74,30 +80,33 @@ bool Board::ValidChipPlacement(int t_x, int t_y)
 	return (t_y < ROW_MAX && t_y >= 0 && t_x < COL_MAX && t_x >= 0);
 }
 
-void Board::PlaceChip(int t_slot, Team t_team)
+bool Board::PlaceChip(int t_slot, Team t_team)
 {
+	bool placed = false;
+
 	int tempX = 0;
 	int tempY = 0;
 
-	if (downDirection.x == 1)
+	switch (currentDirection)
 	{
-		tempY = t_slot;
-		tempX = 0;
-	}
-	else if (downDirection.x == -1)
-	{
-		tempY = t_slot;
-		tempX = COL_MAX - 1;
-	}
-	else if (downDirection.y == 1)
-	{
+	case Directions::Down:
 		tempX = t_slot;
 		tempY = 0;
-	}
-	else if (downDirection.y == -1)
-	{
+		break;
+	case Directions::Up:
 		tempX = t_slot;
 		tempY = ROW_MAX - 1;
+		break;
+	case Directions::Left:
+		tempY = t_slot;
+		tempX = COL_MAX - 1;
+		break;
+	case Directions::Right:
+		tempY = t_slot;
+		tempX = 0;
+		break;
+	default:
+		break;
 	}
 
 	int lastX = tempX;
@@ -114,12 +123,13 @@ void Board::PlaceChip(int t_slot, Team t_team)
 				if (CheckForWin({ (float)lastX, (float)lastY }, t_team))
 					std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
 			}
-			return;
+			return placed;
 		}
 
 		if (!ValidChipPlacement(tempX + downDirection.x, tempY + downDirection.y))
 		{
 			board[tempX][tempY].SetTeam(t_team);
+			placed = true;
 		}
 
 		lastX = tempX;
@@ -128,6 +138,8 @@ void Board::PlaceChip(int t_slot, Team t_team)
 		tempX += downDirection.x;
 		tempY += downDirection.y;
 	}
+
+	return placed;
 }
 
 void Board::Rotate()
