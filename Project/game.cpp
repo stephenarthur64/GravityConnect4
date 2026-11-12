@@ -92,7 +92,7 @@ void Game::DrawGame()
 
     for (int i = buttonStart; i < 7; i++)
     {
-        if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
+        if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop") && !camRotating)
         {
             placed = board.PlaceChip(i, currentPlayer);
         }
