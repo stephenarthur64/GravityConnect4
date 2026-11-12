@@ -10,11 +10,11 @@ void Board::Init()
 	directionIndicator = { GetScreenWidth() / 2.0f, GetScreenHeight() - 20.0f };
 	rect.x = GetScreenWidth() * 0.2f;
 	rect.y = GetScreenHeight() * 0.2f;
-	rect.width = GetScreenWidth() * 0.6f;
+	rect.width = GetScreenWidth() * 0.52f;
 	rect.height = GetScreenHeight() * 0.6f;
 
-	Chip::SetRadius(rect.height * 0.06f);
-	Vector2 topCorner = { rect.x + (Chip::GetRadius() * 1.2f), rect.y + (Chip::GetRadius() * 1.2f) };
+	Chip::SetRadius(rect.height * 0.055f);
+	Vector2 topCorner = { rect.x + (Chip::GetRadius() * 1.5f), rect.y + (Chip::GetRadius() * 1.5f) };
 	Vector2 chipPos = {};
 	Vector2 chipLocalPos = {};
 	float chipPosMult = (Chip::GetRadius() * 3);

@@ -13,8 +13,70 @@ void Game::Init()
 
 void Game::Draw()
 {
-    DrawFPS(0, 0);
+    switch (currentState)
+    {
+    case GameStates::PreGame:
+        DrawPreGame();
+        break;
+    case GameStates::Game:
+        DrawGame();
+        break;
+    case GameStates::PostGame:
+        DrawPostGame();
+        break;
+    }
+}
 
+void Game::Update()
+{
+    switch (currentState)
+    {
+    case GameStates::PreGame:
+        UpdatePreGame();
+        break;
+    case GameStates::Game:
+        UpdateGame();
+        break;
+    case GameStates::PostGame:
+        UpdatePostGame();
+        break;
+    }
+}
+
+void Game::DrawPreGame()
+{
+    Rectangle buttonRect;
+    buttonRect.width = (float)GetScreenWidth();
+    buttonRect.height = GetScreenHeight() * 0.33f;
+    buttonRect.x = 0.0f;
+    buttonRect.y = 0.0f;
+    if (GuiButton(buttonRect, "Easy"))
+    {
+        difficulty = Difficulties::Easy;
+        currentState = GameStates::Game;
+    }
+
+    buttonRect.y += GetScreenHeight() * 0.33f;
+    if (GuiButton(buttonRect, "Medium"))
+    {
+        difficulty = Difficulties::Medium;
+        currentState = GameStates::Game;
+    }
+
+    buttonRect.y += GetScreenHeight() * 0.33f;
+    if (GuiButton(buttonRect, "Hard"))
+    {
+        difficulty = Difficulties::Hard;
+        currentState = GameStates::Game;
+    }
+}
+
+void Game::UpdatePreGame()
+{
+}
+
+void Game::DrawGame()
+{
     BeginMode2D(camera);
 
     board.Draw();
@@ -34,14 +96,14 @@ void Game::Draw()
     }
 }
 
-void Game::Update()
+void Game::UpdateGame()
 {
     if (turn % 4 == 0 && turn > 0)
     {
         if (rotating)
         {
-             board.Rotate();
-             camera.rotation += 90.0f;
+            board.Rotate();
+            camera.rotation += 90.0f;
         }
         turn++;
     }
@@ -78,5 +140,12 @@ void Game::Update()
     default:
         break;
     }
+}
 
+void Game::DrawPostGame()
+{
+}
+
+void Game::UpdatePostGame()
+{
 }
