@@ -99,7 +99,7 @@ bool Board::PlaceChip(int t_slot, Team t_team)
 		tempY = ROW_MAX - 1;
 		break;
 	case Directions::Left:
-		tempY = t_slot;
+		tempY = t_slot - 1;
 		tempX = COL_MAX - 1;
 		break;
 	case Directions::Right:
