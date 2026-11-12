@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "game.h"
+#include <reasings.h>
 
 void Game::Init()
 {
@@ -77,6 +78,8 @@ void Game::UpdatePreGame()
 
 void Game::DrawGame()
 {
+    board.DrawUi();
+
     BeginMode2D(camera);
 
     board.Draw();
@@ -102,10 +105,14 @@ void Game::UpdateGame()
     {
         if (rotating)
         {
-            board.Rotate();
-            camera.rotation += 90.0f;
+            StartCameraRotation();
         }
         turn++;
+    }
+
+    if (RotateCamera())
+    {
+        board.Rotate();
     }
 
     if (placed)
@@ -140,6 +147,33 @@ void Game::UpdateGame()
     default:
         break;
     }
+}
+
+void Game::StartCameraRotation()
+{
+    cameraStartRot = camera.rotation;
+    cameraTimer = 0.0f;
+    camRotating = true;
+}
+
+bool Game::RotateCamera()
+{
+    if (!camRotating)
+    {
+        return false;
+    }
+
+    cameraTimer += GetFrameTime();
+    if (cameraTimer >= CAMERA_ROTATION_DUR)
+    {
+        cameraTimer = CAMERA_ROTATION_DUR;
+        camRotating = false;
+        return true;
+    }
+
+    camera.rotation = EaseSineInOut(cameraTimer, cameraStartRot, 90.0f, CAMERA_ROTATION_DUR);
+
+    return false;
 }
 
 void Game::DrawPostGame()

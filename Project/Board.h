@@ -18,6 +18,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void DrawUi();
 
 	bool ValidChipPlacement(int t_x, int t_y);
 	bool RowLimitCheck(int t_row);
@@ -30,6 +31,8 @@ public:
 	Directions GetDirection() const { return currentDirection; }
 
 private:
+	Texture2D texture;
+
 	bool CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam);
 	bool CheckHorizontal(Vector2 t_dropIndex, Team t_droppedTeam);
 	bool CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam);

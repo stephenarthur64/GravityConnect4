@@ -7,27 +7,34 @@ Board::Board() : directionIndicator({0.0f, 0.0f}), rect({0.0f, 0.0f, 0.0f, 0.0f}
 
 void Board::Init()
 {
+	texture = LoadTexture("Resources/Board.png");
+
 	directionIndicator = { GetScreenWidth() / 2.0f, GetScreenHeight() - 20.0f };
+
+	float scaleX = GetScreenWidth() * 0.52f / texture.width;
+	float scaleY = GetScreenHeight() * 0.6f / texture.height;
+	float scale = std::min(scaleX, scaleY);
+
 	rect.x = GetScreenWidth() * 0.2f;
 	rect.y = GetScreenHeight() * 0.2f;
-	rect.width = GetScreenWidth() * 0.52f;
-	rect.height = GetScreenHeight() * 0.6f;
+	rect.width = texture.width * scale;
+	rect.height = texture.height * scale;
 
-	Chip::SetRadius(rect.height * 0.055f);
-	Vector2 topCorner = { rect.x + (Chip::GetRadius() * 1.5f), rect.y + (Chip::GetRadius() * 1.5f) };
-	Vector2 chipPos = {};
-	Vector2 chipLocalPos = {};
-	float chipPosMult = (Chip::GetRadius() * 3);
+	const Vector2 FIRST_HOLE_POS = { 4.5f, 5.5f };
+	const float HOLE_SPACING = 7.0f;
 
-	for (int row = 0; row < COL_MAX; row++)
+	Chip::SetRadius(2.5f * scale);
+
+	for (int col = 0; col < COL_MAX; col++)
 	{
-		for (int col = 0; col < ROW_MAX; col++)
+		for (int row = 0; row < ROW_MAX; row++)
 		{
-			board[row][col].Init(downDirection);
+			board[col][row].Init(downDirection);
 
-			chipLocalPos = { row * chipPosMult, col * chipPosMult };
-			chipPos = Vector2Add(topCorner, chipLocalPos);
-			board[row][col].SetPos(chipPos);
+			Vector2 chipPos;
+			chipPos.x = rect.x + (FIRST_HOLE_POS.x + col * HOLE_SPACING) * scale;
+			chipPos.y = rect.y + (FIRST_HOLE_POS.y + row * HOLE_SPACING) * scale;
+			board[col][row].SetPos(chipPos);
 		}
 	}
 
@@ -44,7 +51,7 @@ void Board::Update()
 
 void Board::Draw()
 {
-	DrawRectanglePro(rect, { 0.0f, 0.0f }, 0, BLUE);
+	DrawTexturePro(texture, {0.0f, 0.0f, (float)texture.width, (float)texture.height}, rect, { 0.0f, 0.0f }, 0.0f, WHITE);
 
 	for (int row = 0; row < COL_MAX; row++)
 	{
@@ -54,6 +61,11 @@ void Board::Draw()
 		}
 	}
 
+	DrawCircleV(directionIndicator, 10.0f, RED);
+}
+
+void Board::DrawUi()
+{
 	switch (currentDirection)
 	{
 	case Directions::Down:
@@ -71,9 +83,6 @@ void Board::Draw()
 	default:
 		break;
 	}
-
-	DrawCircleV(directionIndicator, 10.0f, RED);
-
 }
 
 bool Board::ValidChipPlacement(int t_x, int t_y)
@@ -253,7 +262,6 @@ bool Board::ColLimitCheck(int t_col)
 
 bool Board::CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam)
 {
-	std::cout << "Drop X: " << t_dropIndex.x << "\n";
 	// Error Checking
 	if (t_dropIndex.x >= COL_MAX || t_dropIndex.x < 0)
 		return false;

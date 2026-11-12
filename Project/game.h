@@ -31,6 +31,13 @@ private:
     void DrawGame();
     void UpdateGame();
 
+    void StartCameraRotation();
+    bool RotateCamera();
+    float cameraTimer = 0.0f;
+    float cameraStartRot = 0.0f;
+    const float CAMERA_ROTATION_DUR = 0.5f;
+    bool camRotating;
+
     void DrawPostGame();
     void UpdatePostGame();
     GameStates currentState = GameStates::PreGame;

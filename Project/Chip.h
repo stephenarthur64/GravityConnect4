@@ -25,6 +25,8 @@ public:
 	void SetTeam(Team t_t) { team = t_t; }
 
 private:
+	Texture2D texture;
+
 	Vector2 position;
 	Vector2 downDirection;
 	static float radius;
