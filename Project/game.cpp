@@ -47,33 +47,90 @@ void Game::Update()
 void Game::DrawPreGame()
 {
     Rectangle buttonRect;
-    buttonRect.width = (float)GetScreenWidth();
+    buttonRect.width = (float)GetScreenWidth() / 2.0f;
     buttonRect.height = GetScreenHeight() * 0.33f;
     buttonRect.x = 0.0f;
     buttonRect.y = 0.0f;
     if (GuiButton(buttonRect, "Easy"))
     {
         difficulty = Difficulties::Easy;
-        currentState = GameStates::Game;
     }
 
     buttonRect.y += GetScreenHeight() * 0.33f;
     if (GuiButton(buttonRect, "Medium"))
     {
         difficulty = Difficulties::Medium;
-        currentState = GameStates::Game;
     }
 
     buttonRect.y += GetScreenHeight() * 0.33f;
     if (GuiButton(buttonRect, "Hard"))
     {
         difficulty = Difficulties::Hard;
-        currentState = GameStates::Game;
+    }
+
+    buttonRect.x += buttonRect.width;
+    if (GuiButton(buttonRect, "Start"))
+    {
+        StartGame();
+    }
+
+    Rectangle dropdownRect;
+    dropdownRect.width = GetScreenWidth() * 0.25f;
+    dropdownRect.height = GetScreenHeight() * 0.1f;
+    dropdownRect.x = (float)GetScreenWidth() / 2.0f;
+
+    dropdownRect.y = 0;
+    DrawText("Red Team", dropdownRect.x, dropdownRect.y, dropdownRect.height / 2.0f, RED);
+
+    dropdownRect.y += GetScreenHeight() * 0.1f;
+    if (GuiDropdownBox(dropdownRect, "Player;MiniMax;Monty-Carlo", &player1TypeChosenInt, dropdownEditMode1))
+    {
+        dropdownEditMode1 = !dropdownEditMode1;
+    }
+
+    dropdownRect.y = 0;
+    dropdownRect.x += dropdownRect.width;
+    DrawText("Yellow Team", dropdownRect.x, dropdownRect.y, dropdownRect.height / 2.0f, YELLOW);
+
+    dropdownRect.y += GetScreenHeight() * 0.1f;
+    if (GuiDropdownBox(dropdownRect, "Player;MiniMax;Monty-Carlo", &player2TypeChosenInt, dropdownEditMode2))
+    {
+        dropdownEditMode2 = !dropdownEditMode2;
     }
 }
 
 void Game::UpdatePreGame()
 {
+}
+
+void Game::StartGame()
+{
+    player1TypeChosen = static_cast<PlayerType>(player1TypeChosenInt);
+    player2TypeChosen = static_cast<PlayerType>(player2TypeChosenInt);
+
+    teamToType[Team::Red] = player1TypeChosen;
+    teamToType[Team::Yellow] = player2TypeChosen;
+
+
+    currentState = GameStates::Game;
+}
+
+int Game::GetAIMove()
+{
+    int move = 1;
+
+    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer);
+
+    if (teamToType[currentPlayer] == PlayerType::MiniMax)
+    {
+        move = tree.GetMiniMaxMove();
+    }
+    else if (teamToType[currentPlayer] == PlayerType::MonteCarlo)
+    {
+        move = tree.GetMonteCarloMove();
+    }
+
+    return move;
 }
 
 void Game::DrawGame()
@@ -90,12 +147,24 @@ void Game::DrawGame()
     if (board.GetDirection() == Directions::Left || board.GetDirection() == Directions::Right)
         buttonStart = 1;
 
-    for (int i = buttonStart; i < 7; i++)
+    // Placing past this point
+    if (camRotating)
+        return;
+
+    if (teamToType[currentPlayer] == PlayerType::Player)
     {
-        if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop") && !camRotating)
+        for (int i = buttonStart; i < 7; i++)
         {
-            placed = board.PlaceChip(i, currentPlayer);
+            if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
+            {
+                placed = board.PlaceChip(i, currentPlayer);
+            }
         }
+    }
+    else
+    {
+        int chosen = GetAIMove();
+        placed = board.PlaceChip(chosen, currentPlayer);
     }
 }
 

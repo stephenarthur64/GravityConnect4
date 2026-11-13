@@ -14,6 +14,8 @@ Game game;
 
 int main(void)
 {
+    srand(time(nullptr));
+
     InitWindow(screenWidth, screenHeight, "Raylib StarterKit GPPI");
     // ToggleFullscreen();
 

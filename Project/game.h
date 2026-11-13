@@ -1,6 +1,7 @@
 #pragma once
 #include <raygui.h>
-#include "Board.h"
+#include "Tree.h"
+#include <map>
 
 enum class GameStates
 {
@@ -15,6 +16,13 @@ enum class Difficulties
     Hard
 };
 
+enum class PlayerType
+{
+    Player,
+    MiniMax,
+    MonteCarlo
+};
+
 class Game
 {
 public:
@@ -27,6 +35,16 @@ private:
 
     void DrawPreGame();
     void UpdatePreGame();
+    bool dropdownEditMode1 = false;
+    bool dropdownEditMode2 = false;
+    int player1TypeChosenInt = 0;
+    int player2TypeChosenInt = 0;
+    PlayerType player1TypeChosen = PlayerType::Player;
+    PlayerType player2TypeChosen = PlayerType::Player;
+
+    void StartGame();
+
+    int GetAIMove();
 
     void DrawGame();
     void UpdateGame();
@@ -49,4 +67,13 @@ private:
     bool placed;
 
     Camera2D camera;
+
+    std::map<Team, PlayerType> teamToType;
+    std::map<Difficulties, int> diffToDepth = {
+        {Difficulties::Easy, 2},
+        {Difficulties::Medium, 5},
+        {Difficulties::Hard, 8}
+    };
+
+    Tree tree;
 };
