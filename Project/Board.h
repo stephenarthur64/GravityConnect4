@@ -29,6 +29,7 @@ public:
 	void FallChips();
 
 	Directions GetDirection() const { return currentDirection; }
+	Team WholeBoardCheck();
 
 private:
 	Texture2D texture;
@@ -38,12 +39,10 @@ private:
 	bool CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam);
 	bool CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam);
 
-	void WholeBoardCheck();
 
 	static const int COL_MAX = 7;
 	static const int ROW_MAX = 6;
 	Chip board[COL_MAX][ROW_MAX];
-	int turn;
 	static const int ROTATE_TURN = 4;
 	Vector2 downDirection = { 0.0f, 1.0f };
 	int directionIndex = 0;

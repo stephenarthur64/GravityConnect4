@@ -131,8 +131,8 @@ bool Board::PlaceChip(int t_slot, Team t_team)
 				board[lastX][lastY].SetTeam(t_team);
 				placed = true;
 
-				if (CheckForWin({ (float)lastX, (float)lastY }, t_team))
-					std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
+				//if (CheckForWin({ (float)lastX, (float)lastY }, t_team))
+				//	std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
 			}
 			return placed;
 		}
@@ -142,8 +142,8 @@ bool Board::PlaceChip(int t_slot, Team t_team)
 			board[tempX][tempY].SetTeam(t_team);
 			placed = true;
 
-			if (CheckForWin({ (float)tempX, (float)tempY }, t_team))
-				std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
+			//if (CheckForWin({ (float)tempX, (float)tempY }, t_team))
+				//std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
 		}
 
 		lastX = tempX;
@@ -206,7 +206,20 @@ void Board::Rotate()
 
 	FallChips();
 
-	WholeBoardCheck();
+	switch (WholeBoardCheck())
+	{
+	case Team::Red:
+	//	std::cout << "Team with more wins is: Red" << std::endl;
+		break;
+	case Team::Yellow:
+	//	std::cout << "Team with more wins is: Yellow" << std::endl;
+		break;
+	case Team::Draw:
+	//	std::cout << "Draw" << std::endl;
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -373,7 +386,7 @@ bool Board::CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam)
 	return false;
 }
 
-void Board::WholeBoardCheck()
+Team Board::WholeBoardCheck()
 {
 	std::map<Team, int> winCount;
 	int totalWins = 0;
@@ -396,20 +409,20 @@ void Board::WholeBoardCheck()
 
 	// No wins found
 	if (totalWins == 0)
-		return;
+		return Team::None;
 
 	// Print what team won
 	if (winCount[Team::Red] == winCount[Team::Yellow])
 	{
-		std::cout << "Draw" << std::endl;
+		return Team::Draw;
 	}
 	else if (winCount[Team::Red] > winCount[Team::Yellow])
 	{
-		std::cout << "Team with more wins is: Red" << std::endl;
+		return Team::Red;
 	}
 	else
 	{
-		std::cout << "Team with more wins is: Yellow" << std::endl;
+		return Team::Yellow;
 	}
 }
 

@@ -5,7 +5,8 @@
 enum class Team {
 	None = -1,
 	Red,
-	Yellow
+	Yellow,
+	Draw
 };
 
 class Chip
