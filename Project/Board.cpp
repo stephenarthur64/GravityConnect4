@@ -394,25 +394,32 @@ int Board::GetHorizontalScore(Team t_team)
 	{
 		// Score on this row
 		int score = 0;
+		int amountOfTeam = 0;
 		int lineStart = -1;
 
 		for (int col = 0; col < COL_MAX; col++)
 		{
 			Team currentTeam = board[col][row].GetTeam();
 			// Check if its the other team
-			if (currentTeam != t_team && currentTeam != Team::None)
+			if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			{
+				lineStart = col;
+			}
+			else if (currentTeam != t_team && currentTeam != Team::None)
 			{
 				lineStart = -1; // Reset line start
 				continue;
 			}
-			else if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			else if (currentTeam == t_team)
 			{
-				lineStart = col;
+				amountOfTeam++;
 			}
 			
 			// If a full 4 line is possible add to score
 			if (col - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
-				score++;
+			{
+				score += GetScoreFromAmount(amountOfTeam);
+			}
 		}
 
 		totalScore += score;
@@ -453,23 +460,7 @@ int Board::GetVerticalScore(Team t_team)
 			// If a full 4 line is possible add to score
 			if (row - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
 			{
-				switch (amountOfTeam)
-				{
-				case 1:
-					score += SINGLE_ROW_SCORE;
-					break;
-
-				case 2:
-					score += TWO_IN_A_ROW_SCORE;
-					break;
-
-				case 3:
-					score += THREE_IN_A_ROW_SCORE;
-					break;
-
-				default: // No score added
-					break;
-				}
+				score += GetScoreFromAmount(amountOfTeam);
 			}
 		}
 
@@ -497,31 +488,59 @@ int Board::GetDiagonalScore(Team t_team)
 				if (!ValidChipPlacement(endX, endY))
 					continue;
 
-				bool validLine = true;
+				int amountOfTeam = 0;
+				bool blocked = false;
 
-				// Check each cell
-				for (int s = 0; s < WIN_CONDITION; s++)
+				// Check each chip in diagonal
+				for (int i = 0; i < WIN_CONDITION; i++)
 				{
-					int checkX = col + s;
-					int checkY = row + s * dir;
+					int x = col + i;
+					int y = row + 1 * dir;
 
-					Team currentTeam = board[checkX][checkY].GetTeam();
+					Team currentTeam = board[x][y].GetTeam();
 
-					// Opponent blocks this diagonal
+					// Diagonal Blocked
 					if (currentTeam != t_team && currentTeam != Team::None)
 					{
-						validLine = false;
+						blocked = true;
 						break;
+					}
+					else if (currentTeam == t_team)
+					{
+						amountOfTeam++;
 					}
 				}
 
-				if (validLine)
-					totalScore++;
+				if (!blocked)
+					totalScore += GetScoreFromAmount(amountOfTeam);
 			}
 		}
 	}
 
 	return totalScore;
+}
+
+int Board::GetScoreFromAmount(int t_amountOfTeam)
+{
+	switch (t_amountOfTeam)
+	{
+	case 1:
+		return SINGLE_ROW_SCORE;
+		break;
+
+	case 2:
+		return TWO_IN_A_ROW_SCORE;
+		break;
+
+	case 3:
+		return THREE_IN_A_ROW_SCORE;
+		break;
+
+	default: // No score added
+		break;
+	}
+
+	return 0;
 }
 
 Team Board::WholeBoardCheck()

@@ -49,6 +49,7 @@ private:
 	int GetHorizontalScore(Team t_team);
 	int GetVerticalScore(Team t_team);
 	int GetDiagonalScore(Team t_team);
+	int GetScoreFromAmount(int t_amountOfTeam);
 
 	static const int COL_MAX = 7;
 	static const int ROW_MAX = 6;
