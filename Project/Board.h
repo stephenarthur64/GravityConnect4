@@ -43,9 +43,9 @@ private:
 	bool CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam);
 
 	// Count horizontals
-	int CountHorizontalLines(Team t_team);
-	int CountVerticalLines(Team t_team);
-	int CountDiagonalLines(Team t_team);
+	int GetHorizontalScore(Team t_team);
+	int GetVerticalScore(Team t_team);
+	int GetDiagonalScore(Team t_team);
 
 	static const int COL_MAX = 7;
 	static const int ROW_MAX = 6;

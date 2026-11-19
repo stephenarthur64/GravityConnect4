@@ -12,11 +12,6 @@ void Node::SetBoard(Board t_board, Team t_team, int t_turn)
 	board = t_board;
 	currentPlayer = t_team;
 	currentTurn = t_turn;
-
-	if (currentTurn > 0 && currentTurn % 4 == 0)
-	{
-		board.Rotate();
-	}
 }
 
 void Node::GenerateChildren()

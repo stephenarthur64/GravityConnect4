@@ -386,7 +386,7 @@ bool Board::CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam)
 	return false;
 }
 
-int Board::CountHorizontalLines(Team t_team)
+int Board::GetHorizontalScore(Team t_team)
 {
 	int totalScore = 0;
 
@@ -398,7 +398,7 @@ int Board::CountHorizontalLines(Team t_team)
 
 		for (int col = 0; col < COL_MAX; col++)
 		{
-			Team currentTeam = board[row][col].GetTeam();
+			Team currentTeam = board[col][row].GetTeam();
 			// Check if its the other team
 			if (currentTeam != t_team && currentTeam != Team::None)
 			{
@@ -411,7 +411,7 @@ int Board::CountHorizontalLines(Team t_team)
 			}
 			
 			// If a full 4 line was possible add to score
-			if (col - lineStart == WIN_CONDITION)
+			if (col - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
 				score++;
 		}
 
@@ -421,7 +421,7 @@ int Board::CountHorizontalLines(Team t_team)
 	return totalScore;
 }
 
-int Board::CountVerticalLines(Team t_team)
+int Board::GetVerticalScore(Team t_team)
 {
 	int totalScore = 0;
 
@@ -433,7 +433,7 @@ int Board::CountVerticalLines(Team t_team)
 
 		for (int row = 0; row < ROW_MAX; row++)
 		{
-			Team currentTeam = board[row][col].GetTeam();
+			Team currentTeam = board[col][row].GetTeam();
 			// Check if its the other team
 			if (currentTeam != t_team && currentTeam != Team::None)
 			{
@@ -446,7 +446,7 @@ int Board::CountVerticalLines(Team t_team)
 			}
 
 			// If a full 4 line was possible add to score
-			if (row - lineStart == WIN_CONDITION)
+			if (row - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
 				score++;
 		}
 
@@ -456,9 +456,49 @@ int Board::CountVerticalLines(Team t_team)
 	return totalScore;
 }
 
-int Board::CountDiagonalLines(Team t_team)
+int Board::GetDiagonalScore(Team t_team)
 {
-	return 0;
+	int totalScore = 0;
+
+	// Check both diagonal directions
+	for (int dir = -1; dir <= 1; dir += 2)
+	{
+		for (int col = 0; col < COL_MAX; col++)
+		{
+			for (int row = 0; row < ROW_MAX; row++)
+			{
+				// Check if a diagonal fits
+				int endX = col + (WIN_CONDITION - 1);
+				int endY = row + (WIN_CONDITION - 1) * dir;
+
+				if (!ValidChipPlacement(endX, endY))
+					continue;
+
+				bool validLine = true;
+
+				// Check each cell
+				for (int s = 0; s < WIN_CONDITION; s++)
+				{
+					int checkX = col + s;
+					int checkY = row + s * dir;
+
+					Team currentTeam = board[checkX][checkY].GetTeam();
+
+					// Opponent blocks this diagonal
+					if (currentTeam != t_team && currentTeam != Team::None)
+					{
+						validLine = false;
+						break;
+					}
+				}
+
+				if (validLine)
+					totalScore++;
+			}
+		}
+	}
+
+	return totalScore;
 }
 
 Team Board::WholeBoardCheck()
@@ -469,12 +509,12 @@ Team Board::WholeBoardCheck()
 	{
 		for (int col = 0; col < COL_MAX; col++)
 		{
-			Team teamChecked = board[row][col].GetTeam();
+			Team teamChecked = board[col][row].GetTeam();
 			// Dont count empty slots
 			if (teamChecked == Team::None)
 				continue;
 
-			if (CheckForWin({ (float)row, (float)col }, teamChecked))
+			if (CheckForWin({ (float)col, (float)row }, teamChecked))
 			{
 				winCount[teamChecked]++;
 				totalWins++;
@@ -518,30 +558,30 @@ int Board::Evaluate(Team t_team)
 	if (t_team == Team::Red)
 	{
 		// Add horizontal score
-		result += CountHorizontalLines(Team::Red);
-		result -= CountHorizontalLines(Team::Yellow);
+		result += GetHorizontalScore(Team::Red);
+		result -= GetHorizontalScore(Team::Yellow);
 
 		// Add vertical score
-		result += CountVerticalLines(Team::Red);
-		result -= CountVerticalLines(Team::Yellow);
+		result += GetVerticalScore(Team::Red);
+		result -= GetVerticalScore(Team::Yellow);
 
 		// Add diagonal score
-		result += CountDiagonalLines(Team::Red);
-		result -= CountDiagonalLines(Team::Yellow);
+		result += GetDiagonalScore(Team::Red);
+		result -= GetDiagonalScore(Team::Yellow);
 	}
 	else if (t_team == Team::Yellow)
 	{
 		// Add horizontal score
-		result += CountHorizontalLines(Team::Yellow);
-		result -= CountHorizontalLines(Team::Red);
+		result += GetHorizontalScore(Team::Yellow);
+		result -= GetHorizontalScore(Team::Red);
 
 		// Add vertical score
-		result += CountVerticalLines(Team::Yellow);
-		result -= CountVerticalLines(Team::Red);
+		result += GetVerticalScore(Team::Yellow);
+		result -= GetVerticalScore(Team::Red);
 
 		// Add diagonal score
-		result += CountDiagonalLines(Team::Yellow);
-		result -= CountDiagonalLines(Team::Red);
+		result += GetDiagonalScore(Team::Yellow);
+		result -= GetDiagonalScore(Team::Red);
 	}
 
 

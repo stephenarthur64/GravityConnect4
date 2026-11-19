@@ -119,11 +119,11 @@ int Game::GetAIMove()
 {
     int move = 1;
 
-    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer);
+    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer, turn);
 
     if (teamToType[currentPlayer] == PlayerType::MiniMax)
     {
-        move = tree.GetMiniMaxMove();
+        move = tree.GetMiniMaxMove(currentPlayer);
     }
     else if (teamToType[currentPlayer] == PlayerType::MonteCarlo)
     {
@@ -176,7 +176,6 @@ void Game::UpdateGame()
         {
             StartCameraRotation();
         }
-        turn++;
     }
 
     if (RotateCamera())

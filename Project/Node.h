@@ -11,8 +11,13 @@ public:
 	void GenerateChildren();
 	void ClearChildren() { children.clear(); }
 
+	bool HasChildren() const { return !children.empty(); }
+	const std::vector<std::shared_ptr<Node>>& GetChildren() const { return children; }
+
 	// MiniMax
 	void CalcHeuristic(Team t_team);
+	int GetHeuristic() const { return heuristic; }
+	Team GetWinner() { return board.WholeBoardCheck(); }
 
 	// Monte-Carlo
 	void CalculateUTC();
