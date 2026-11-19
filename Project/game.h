@@ -54,6 +54,7 @@ private:
     float cameraTimer = 0.0f;
     float cameraStartRot = 0.0f;
     const float CAMERA_ROTATION_DUR = 0.5f;
+    bool canRotate = false;
     bool camRotating;
 
     void DrawPostGame();
@@ -63,7 +64,7 @@ private:
     Board board;
     Team currentPlayer = Team::Red;
     int turn = 0;
-    bool rotating = true;
+    bool rotationOn = true;
     bool placed;
 
     Camera2D camera;

@@ -410,7 +410,7 @@ int Board::GetHorizontalScore(Team t_team)
 				lineStart = col;
 			}
 			
-			// If a full 4 line was possible add to score
+			// If a full 4 line is possible add to score
 			if (col - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
 				score++;
 		}
@@ -429,25 +429,48 @@ int Board::GetVerticalScore(Team t_team)
 	{
 		// Score on this column
 		int score = 0;
+		int amountOfTeam = 0;
 		int lineStart = -1;
 
 		for (int row = 0; row < ROW_MAX; row++)
 		{
 			Team currentTeam = board[col][row].GetTeam();
+			if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			{
+				lineStart = row;
+			}
 			// Check if its the other team
-			if (currentTeam != t_team && currentTeam != Team::None)
+			else if (currentTeam != t_team && currentTeam != Team::None)
 			{
 				lineStart = -1; // Reset line start
 				continue;
 			}
-			else if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			else if (currentTeam == t_team)
 			{
-				lineStart = row;
+				amountOfTeam++;
 			}
 
-			// If a full 4 line was possible add to score
+			// If a full 4 line is possible add to score
 			if (row - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
-				score++;
+			{
+				switch (amountOfTeam)
+				{
+				case 1:
+					score += SINGLE_ROW_SCORE;
+					break;
+
+				case 2:
+					score += TWO_IN_A_ROW_SCORE;
+					break;
+
+				case 3:
+					score += THREE_IN_A_ROW_SCORE;
+					break;
+
+				default: // No score added
+					break;
+				}
+			}
 		}
 
 		totalScore += score;

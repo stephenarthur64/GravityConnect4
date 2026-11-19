@@ -172,7 +172,7 @@ void Game::UpdateGame()
 {
     if (turn % 4 == 0 && turn > 0)
     {
-        if (rotating)
+        if (rotationOn && !camRotating && canRotate)
         {
             StartCameraRotation();
         }
@@ -186,6 +186,7 @@ void Game::UpdateGame()
     if (placed)
     {
         turn++;
+        canRotate = true;
         if (currentPlayer == Team::Red)
         {
             currentPlayer = Team::Yellow;
@@ -199,7 +200,7 @@ void Game::UpdateGame()
 
     if (IsKeyReleased(KEY_Q))
     {
-        rotating = !rotating;
+        rotationOn = !rotationOn;
     }
 
     board.Update();
@@ -222,6 +223,7 @@ void Game::StartCameraRotation()
     cameraStartRot = camera.rotation;
     cameraTimer = 0.0f;
     camRotating = true;
+    canRotate = false;
 }
 
 bool Game::RotateCamera()
