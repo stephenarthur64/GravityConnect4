@@ -386,6 +386,81 @@ bool Board::CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam)
 	return false;
 }
 
+int Board::CountHorizontalLines(Team t_team)
+{
+	int totalScore = 0;
+
+	for (int row = 0; row < ROW_MAX; row++)
+	{
+		// Score on this row
+		int score = 0;
+		int lineStart = -1;
+
+		for (int col = 0; col < COL_MAX; col++)
+		{
+			Team currentTeam = board[row][col].GetTeam();
+			// Check if its the other team
+			if (currentTeam != t_team && currentTeam != Team::None)
+			{
+				lineStart = -1; // Reset line start
+				continue;
+			}
+			else if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			{
+				lineStart = col;
+			}
+			
+			// If a full 4 line was possible add to score
+			if (col - lineStart == WIN_CONDITION)
+				score++;
+		}
+
+		totalScore += score;
+	}
+
+	return totalScore;
+}
+
+int Board::CountVerticalLines(Team t_team)
+{
+	int totalScore = 0;
+
+	for (int col = 0; col < COL_MAX; col++)
+	{
+		// Score on this column
+		int score = 0;
+		int lineStart = -1;
+
+		for (int row = 0; row < ROW_MAX; row++)
+		{
+			Team currentTeam = board[row][col].GetTeam();
+			// Check if its the other team
+			if (currentTeam != t_team && currentTeam != Team::None)
+			{
+				lineStart = -1; // Reset line start
+				continue;
+			}
+			else if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			{
+				lineStart = row;
+			}
+
+			// If a full 4 line was possible add to score
+			if (row - lineStart == WIN_CONDITION)
+				score++;
+		}
+
+		totalScore += score;
+	}
+
+	return totalScore;
+}
+
+int Board::CountDiagonalLines(Team t_team)
+{
+	return 0;
+}
+
 Team Board::WholeBoardCheck()
 {
 	std::map<Team, int> winCount;
@@ -424,6 +499,53 @@ Team Board::WholeBoardCheck()
 	{
 		return Team::Yellow;
 	}
+}
+
+int Board::Evaluate(Team t_team)
+{
+	Team winningTeam = WholeBoardCheck();
+
+	// A win was found for this team
+	if (winningTeam == t_team)
+		return 999; // Win
+	
+	// A win was found for a different team
+	if (winningTeam != t_team && winningTeam != Team::None)
+		return -999; // Lose
+
+	int result = 0;
+
+	if (t_team == Team::Red)
+	{
+		// Add horizontal score
+		result += CountHorizontalLines(Team::Red);
+		result -= CountHorizontalLines(Team::Yellow);
+
+		// Add vertical score
+		result += CountVerticalLines(Team::Red);
+		result -= CountVerticalLines(Team::Yellow);
+
+		// Add diagonal score
+		result += CountDiagonalLines(Team::Red);
+		result -= CountDiagonalLines(Team::Yellow);
+	}
+	else if (t_team == Team::Yellow)
+	{
+		// Add horizontal score
+		result += CountHorizontalLines(Team::Yellow);
+		result -= CountHorizontalLines(Team::Red);
+
+		// Add vertical score
+		result += CountVerticalLines(Team::Yellow);
+		result -= CountVerticalLines(Team::Red);
+
+		// Add diagonal score
+		result += CountDiagonalLines(Team::Yellow);
+		result -= CountDiagonalLines(Team::Red);
+	}
+
+
+	return result;
 }
 
 void Board::FallChips()

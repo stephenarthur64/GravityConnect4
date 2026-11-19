@@ -51,6 +51,11 @@ void Node::GenerateChildren()
 	}
 }
 
+void Node::CalcHeuristic(Team t_team)
+{
+	heuristic = board.Evaluate(t_team);
+}
+
 void Node::CalculateUTC()
 {
 	float exploitation = 0.0f;

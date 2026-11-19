@@ -9,9 +9,11 @@ public:
 	Node();
 	void SetBoard(Board t_board, Team t_team, int t_turn);
 	void GenerateChildren();
-	void SetHeuristic(float t_h) { heuristic = t_h; }
 	void ClearChildren() { children.clear(); }
-	
+
+	// MiniMax
+	void CalcHeuristic(Team t_team);
+
 	// Monte-Carlo
 	void CalculateUTC();
 	void CalculateAllUTC();
@@ -21,7 +23,7 @@ public:
 	void visit() { visits++; }
 
 	std::shared_ptr<Node> GetFirstChild() { return children.front(); }
-	int GetMove() { return moveUsed; }
+	int GetMove() const { return moveUsed; }
 
 private:
 	int moveUsed = 0;

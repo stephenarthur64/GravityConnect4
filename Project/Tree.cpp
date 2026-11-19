@@ -19,6 +19,13 @@ void Tree::ResetTree()
 
 int Tree::GetMiniMaxMove()
 {
+	int currentDepth = 0;
+	while (currentDepth < 100)
+	{
+
+		currentDepth++;
+	}
+
 	return 1;
 }
 

@@ -31,14 +31,21 @@ public:
 	Directions GetDirection() const { return currentDirection; }
 	Team WholeBoardCheck();
 
+	int Evaluate(Team t_team);
+
 private:
 	Texture2D texture;
 
 	bool CheckForWin(Vector2 t_dropIndex, Team t_droppedTeam);
+	// Specific win types
 	bool CheckHorizontal(Vector2 t_dropIndex, Team t_droppedTeam);
 	bool CheckVertical(Vector2 t_dropIndex, Team t_droppedTeam);
 	bool CheckDiagonal(Vector2 t_dropIndex, Team t_droppedTeam);
 
+	// Count horizontals
+	int CountHorizontalLines(Team t_team);
+	int CountVerticalLines(Team t_team);
+	int CountDiagonalLines(Team t_team);
 
 	static const int COL_MAX = 7;
 	static const int ROW_MAX = 6;
