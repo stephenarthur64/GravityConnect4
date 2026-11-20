@@ -148,7 +148,6 @@ int Tree::GetMonteCarloMove(int t_depth)
 	currentNode->CalculateAllUTC();
 	currentNode->SortChildrenByUCT();
 	move = currentNode->GetFirstChild()->GetMove();
-	//currentNode = currentNode->GetFirstChild();
 	std::cout << "Move picked: " << move << "\n";
 
 	return move;

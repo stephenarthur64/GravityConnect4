@@ -92,13 +92,16 @@ void Node::CalculateUTC()
 	float exploitation = 0.0f;
 	float exploration = 0.0f;
 
-	if (visits > 0 && parent->visits > 0)
+	if (parent != nullptr)
 	{
-		exploitation = (double)wins / visits;
-		exploration = sqrt((log((double)parent->visits) / visits));
-	}
+		if (visits > 0 && parent->visits > 0)
+		{
+			exploitation = (double)wins / visits;
+			exploration = sqrt((log((double)parent->visits) / visits));
+		}
 
-	UTC = exploitation + (explorationConstant * exploration);
+		UTC = exploitation + (explorationConstant * exploration);
+	}
 }
 
 void Node::CalculateAllUTC()
@@ -136,8 +139,6 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 	int allMoves = 0;
 
 	visits++;
-
-	//board.PlaceChip(moveUsed, currentPlayer);
 
 	Team winState = board.WholeBoardCheck();
 
@@ -190,7 +191,6 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 		wins++;
 	}
 
-	//CalculateUTC();
 	return result;
 
 }
