@@ -403,37 +403,31 @@ int Board::GetHorizontalScore(Team t_team)
 
 	for (int row = 0; row < ROW_MAX; row++)
 	{
-		// Score on this row
-		int score = 0;
-		int amountOfTeam = 0;
-		int lineStart = -1;
-
-		for (int col = 0; col < COL_MAX; col++)
+		for (int col = 0; col <= COL_MAX - WIN_CONDITION; col++)
 		{
-			Team currentTeam = board[col][row].GetTeam();
-			// Check if its the other team
-			if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			int amountOfTeam = 0;
+			bool blocked = false;
+
+			for (int i = 0; i < WIN_CONDITION; i++)
 			{
-				lineStart = col;
+				int currentCol = col + i;
+				Team currentTeam = board[currentCol][row].GetTeam();
+
+				if (currentTeam != t_team && currentTeam != Team::None)
+				{
+					blocked = true;
+				}
+				else if (currentTeam == t_team)
+				{
+					amountOfTeam++;
+				}
 			}
-			else if (currentTeam != t_team && currentTeam != Team::None)
+
+			if (!blocked)
 			{
-				lineStart = -1; // Reset line start
-				continue;
-			}
-			else if (currentTeam == t_team)
-			{
-				amountOfTeam++;
-			}
-			
-			// If a full 4 line is possible add to score
-			if (col - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
-			{
-				score += GetScoreFromAmount(amountOfTeam);
+				totalScore += GetScoreFromAmount(amountOfTeam);
 			}
 		}
-
-		totalScore += score;
 	}
 
 	return totalScore;
@@ -443,39 +437,33 @@ int Board::GetVerticalScore(Team t_team)
 {
 	int totalScore = 0;
 
-	for (int col = 0; col < COL_MAX; col++)
+	for (int row = 0; row <= ROW_MAX - WIN_CONDITION; row++)
 	{
-		// Score on this column
-		int score = 0;
-		int amountOfTeam = 0;
-		int lineStart = -1;
-
-		for (int row = 0; row < ROW_MAX; row++)
+		for (int col = 0; col < COL_MAX; col++)
 		{
-			Team currentTeam = board[col][row].GetTeam();
-			if (lineStart == -1) // Either empty or is the team AND lineStart not set
+			int amountOfTeam = 0;
+			bool blocked = false;
+
+			for (int i = 0; i < WIN_CONDITION; i++)
 			{
-				lineStart = row;
-			}
-			// Check if its the other team
-			else if (currentTeam != t_team && currentTeam != Team::None)
-			{
-				lineStart = -1; // Reset line start
-				continue;
-			}
-			else if (currentTeam == t_team)
-			{
-				amountOfTeam++;
+				int currentRow = row + i;
+				Team currentTeam = board[col][currentRow].GetTeam();
+
+				if (currentTeam != t_team && currentTeam != Team::None)
+				{
+					blocked = true;
+				}
+				else if (currentTeam == t_team)
+				{
+					amountOfTeam++;
+				}
 			}
 
-			// If a full 4 line is possible add to score
-			if (row - lineStart >= WIN_CONDITION - 1 && lineStart != -1)
+			if (!blocked)
 			{
-				score += GetScoreFromAmount(amountOfTeam);
+				totalScore += GetScoreFromAmount(amountOfTeam);
 			}
 		}
-
-		totalScore += score;
 	}
 
 	return totalScore;
@@ -506,7 +494,7 @@ int Board::GetDiagonalScore(Team t_team)
 				for (int i = 0; i < WIN_CONDITION; i++)
 				{
 					int x = col + i;
-					int y = row + 1 * dir;
+					int y = row + i * dir;
 
 					Team currentTeam = board[x][y].GetTeam();
 
@@ -600,11 +588,11 @@ int Board::Evaluate(Team t_team)
 
 	// A win was found for this team
 	if (winningTeam == t_team)
-		return 999; // Win
+		return 99999; // Win
 	
 	// A win was found for a different team
 	if (winningTeam != t_team && winningTeam != Team::None)
-		return -999; // Lose
+		return -99999; // Lose
 
 	int result = 0;
 

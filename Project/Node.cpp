@@ -78,6 +78,8 @@ std::shared_ptr<Node> Node::FindChildByMove(int t_move)
 			return n;
 		}
 	}
+
+	return nullptr;
 }
 
 void Node::CalcHeuristic(Team t_team)

@@ -121,8 +121,6 @@ int Game::GetAIMove()
 {
     int move = 1;
 
-    tree.IncrementGameState(lastPlayerMove);
-
     if (teamToType[currentPlayer] == PlayerType::MiniMax)
     {
         move = tree.GetMiniMaxMove(currentPlayer);
@@ -164,14 +162,23 @@ void Game::DrawGame()
                 if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
                 {
                     placed = board.PlaceChip(i, currentPlayer);
-                    lastPlayerMove = i;
+                    
+                    if (placed)
+                        tree.IncrementGameState(i);
                 }
             }
         }
         else
         {
             int chosen = GetAIMove();
-            placed = board.PlaceChip(chosen, currentPlayer);
+
+            if (chosen >= 0)
+            {
+                placed = board.PlaceChip(chosen, currentPlayer);
+
+                if (placed)
+                    tree.IncrementGameState(chosen);
+            }
         }
     }
 

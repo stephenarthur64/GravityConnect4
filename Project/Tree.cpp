@@ -55,9 +55,14 @@ int Tree::GetMiniMaxMove(Team t_team)
 	int bestMove = -1;
 	int bestScore = -9999999;
 
+	if (!currentNode->HasChildren())
+	{
+		currentNode->GenerateChildren();
+	}
+
 	std::cout << "Started search for best move" << std::endl;
 
-	for (const std::shared_ptr<Node>& child : startNode.GetChildren())
+	for (const std::shared_ptr<Node>& child : currentNode->GetChildren())
 	{
 		int score = MiniMax(child, currentDepth - 1, false, t_team);
 
@@ -144,7 +149,7 @@ int Tree::GetMonteCarloMove()
 	currentNode->CalculateAllUTC();
 	currentNode->SortChildrenByUCT();
 	move = currentNode->GetFirstChild()->GetMove();
-	currentNode = currentNode->GetFirstChild();
+	//currentNode = currentNode->GetFirstChild();
 	std::cout << "Move picked: " << move << "\n";
 
 	return move;
