@@ -11,10 +11,22 @@ void Node::SetBoard(Board t_board, Team t_team, int t_turn)
 {
 	board = t_board;
 	currentPlayer = t_team;
+	if (t_turn == 0)
+	{
+		rootTeam = t_team;
+	}
 	currentTurn = t_turn;
 }
 
 void Node::GenerateChildren()
+{
+	for (int i = 0; i < 7; i++)
+	{
+		AddChild(i);
+	}
+}
+
+bool Node::AddChild(int t_move)
 {
 	Team nextTeam = Team::None;
 
@@ -29,19 +41,35 @@ void Node::GenerateChildren()
 	else
 	{
 		std::cout << "ERROR - No team assigned\n";
-		return;
+		return false;
 	}
 
-	for (int i = 0; i < 7; i++)
-	{
-		std::shared_ptr<Node> child = std::make_shared<Node>();
+	std::shared_ptr<Node> child = std::make_shared<Node>();
 
-		child->SetBoard(board, nextTeam, currentTurn + 1);
-		if (child->board.PlaceChip(i, nextTeam))
+	child->SetBoard(board, nextTeam, currentTurn + 1);
+	if (child->board.PlaceChip(t_move, nextTeam))
+	{
+		child->parent = this;
+		child->moveUsed = t_move;
+		child->rootTeam = rootTeam;
+		children.push_back(child);
+		return true;
+	}
+	return false;
+}
+
+std::shared_ptr<Node> Node::FindChildByMove(int t_move)
+{
+	if (children.size() == 0)
+	{
+		return nullptr;
+	}
+
+	for (std::shared_ptr<Node> n : children)
+	{
+		if (n->moveUsed == t_move)
 		{
-			child->parent = this;
-			child->moveUsed = i;
-			children.push_back(child);
+			return n;
 		}
 	}
 }
@@ -77,6 +105,7 @@ void Node::CalculateAllUTC()
 
 void Node::SortChildrenByUCT()
 {
+	if (children.size() == 0) { return; }
 	std::sort(children.begin(), children.end(),
 		[](std::shared_ptr<Node> const Node1, std::shared_ptr<Node> const Node2)
 		{
@@ -86,15 +115,8 @@ void Node::SortChildrenByUCT()
 
 void Node::ProcessNodeMonteCarlo()
 {
-	if (children.size() == 0)
-	{
-		GenerateChildren();
-	}
-
-	SortChildrenByUCT();
-
+	int simulationResult = SimulationMonteCarlo(rootTeam); // 0 for loss / draw, 1 for win
 	visits++;
-	int simulationResult = children.front()->SimulationMonteCarlo(parent->currentPlayer); // 0 for loss / draw, 1 for win
 	wins += simulationResult;
 	CalculateUTC();
 }
@@ -102,22 +124,49 @@ void Node::ProcessNodeMonteCarlo()
 int Node::SimulationMonteCarlo(Team t_originalTeam)
 {
 	int result = 0;
+	int nextMove = 0;
+	bool childMade = false;
+	int allMoves = 0;
 
 	visits++;
 
-	board.PlaceChip(moveUsed, currentPlayer);
+	//board.PlaceChip(moveUsed, currentPlayer);
 
 	Team winState = board.WholeBoardCheck();
 
 	if (winState == Team::None) // Not terminal node
 	{
-		if (children.size() == 0)
+		FindAllPossibleMoves();
+
+		for (int i = 0; i < 7; i++) // Check if there are any possible moves
 		{
-			GenerateChildren();
+			if (possibleMoves[i] == 1)
+			{
+				allMoves++;
+			}
 		}
 
-		int nextMove = rand() % children.size();
-		result = children.at(nextMove)->SimulationMonteCarlo(t_originalTeam);
+		if (allMoves == 0)
+		{
+			return 0; // Draw
+		}
+
+		while (!childMade)
+		{
+			nextMove = rand() % 7;
+			std::shared_ptr<Node> nextChild = FindChildByMove(nextMove);
+			
+			if (nextChild != nullptr) // if child node already exists
+			{
+				result = nextChild->SimulationMonteCarlo(t_originalTeam);
+				childMade = true;
+			}
+			else if (possibleMoves[nextMove] == 1)
+			{
+				childMade = AddChild(nextMove);
+				result = children.back()->SimulationMonteCarlo(t_originalTeam);
+			}
+		}
 	}
 	else if (winState == t_originalTeam) // Win
 	{
@@ -137,5 +186,19 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 
 	return result;
 
+}
+
+void Node::FindAllPossibleMoves()
+{
+	Board dummy = board;
+
+	for (int i = 0; i < 7; i++)
+	{
+		if (dummy.PlaceChip(i, currentPlayer))
+		{
+			possibleMoves[i] = 1;
+		}
+		dummy = board;
+	}
 }
 

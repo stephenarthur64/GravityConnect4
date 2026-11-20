@@ -9,6 +9,8 @@ public:
 	Node();
 	void SetBoard(Board t_board, Team t_team, int t_turn);
 	void GenerateChildren();
+	bool AddChild(int t_move);
+	void SetHeuristic(float t_h) { heuristic = t_h; }
 	void ClearChildren() { children.clear(); }
 
 	bool HasChildren() const { return !children.empty(); }
@@ -19,13 +21,16 @@ public:
 	int GetHeuristic() const { return heuristic; }
 	Team GetWinner() { return board.WholeBoardCheck(); }
 
+	std::shared_ptr<Node> FindChildByMove(int t_move);
+	
 	// Monte-Carlo
 	void CalculateUTC();
 	void CalculateAllUTC();
 	void SortChildrenByUCT();
 	void ProcessNodeMonteCarlo();
 	int SimulationMonteCarlo(Team t_originalTeam);
-	void visit() { visits++; }
+	void FindAllPossibleMoves();
+	void visit() { visits++; if (children.size() == 0) { GenerateChildren(); } }
 
 	std::shared_ptr<Node> GetFirstChild() { return children.front(); }
 	int GetMove() const { return moveUsed; }
@@ -37,9 +42,11 @@ private:
 	Node* parent = nullptr;
 	Board board;
 	Team currentPlayer = Team::None;
+	Team rootTeam = Team::None;
 	float heuristic = 0.0f;
 	int wins = 0;
 	int visits = 0;
 	float UTC = INFINITY;
+	int possibleMoves[7] = {};
 };
 

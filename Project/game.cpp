@@ -113,13 +113,13 @@ void Game::StartGame()
 
 
     currentState = GameStates::Game;
+
+    tree.BuildTree(diffToDepth[difficulty], board, Team::Yellow);
 }
 
 int Game::GetAIMove()
 {
     int move = 1;
-
-    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer, turn);
 
     if (teamToType[currentPlayer] == PlayerType::MiniMax)
     {
@@ -127,7 +127,7 @@ int Game::GetAIMove()
     }
     else if (teamToType[currentPlayer] == PlayerType::MonteCarlo)
     {
-        move = tree.GetMonteCarloMove();
+        move = tree.GetMonteCarloMove(lastPlayerMove);
     }
 
     return move;
@@ -136,13 +136,6 @@ int Game::GetAIMove()
 void Game::DrawGame()
 {
     board.DrawUi();
-
-    BeginMode2D(camera);
-
-    board.Draw();
-
-    EndMode2D();
-
     int buttonStart = 0;
     if (board.GetDirection() == Directions::Left || board.GetDirection() == Directions::Right)
         buttonStart = 1;
@@ -158,6 +151,7 @@ void Game::DrawGame()
             if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
             {
                 placed = board.PlaceChip(i, currentPlayer);
+                lastPlayerMove = i;
             }
         }
     }
@@ -166,6 +160,13 @@ void Game::DrawGame()
         int chosen = GetAIMove();
         placed = board.PlaceChip(chosen, currentPlayer);
     }
+
+    BeginMode2D(camera);
+
+    board.Draw();
+
+    EndMode2D();
+
 }
 
 void Game::UpdateGame()

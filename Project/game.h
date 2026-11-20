@@ -77,4 +77,5 @@ private:
     };
 
     Tree tree;
+    int lastPlayerMove = 0;
 };

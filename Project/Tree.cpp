@@ -18,6 +18,7 @@ void Tree::BuildTree(int t_depth, Board t_start, Team t_current, int t_currentTu
 
 	startNode.SetBoard(t_start, previousPlayer, t_currentTurn);
 	startNode.GenerateChildren();
+	currentNode = std::make_shared<Node>(startNode);
 }
 
 void Tree::ResetTree()
@@ -100,24 +101,35 @@ int Tree::MiniMax(std::shared_ptr<Node> t_node, int t_depth, bool t_max, Team t_
 	}
 }
 
-int Tree::GetMonteCarloMove()
+int Tree::GetMonteCarloMove(int t_lastPlayerMove)
 {
 	int move = 0;
 
-	int depth = 0;
-
-	while (depth < 100)
+	int currentDepth = 0;
+	std::shared_ptr<Node> nextMove = currentNode->FindChildByMove(t_lastPlayerMove);
+	if (nextMove != nullptr)
 	{
-		startNode.SortChildrenByUCT();
-
-		startNode.visit();
-		startNode.GetFirstChild()->ProcessNodeMonteCarlo();
-
-		depth++;
+		currentNode = nextMove;
+	}
+	else
+	{
+		currentNode->AddChild(t_lastPlayerMove);
+		currentNode = currentNode->FindChildByMove(t_lastPlayerMove);
 	}
 
-	startNode.SortChildrenByUCT();
-	move = startNode.GetFirstChild()->GetMove();
+	while (currentDepth < 1000)
+	{
+		currentNode->SortChildrenByUCT();
+
+		currentNode->visit();
+		currentNode->GetFirstChild()->ProcessNodeMonteCarlo();
+
+		currentDepth++;
+	}
+
+	currentNode->SortChildrenByUCT();
+	move = currentNode->GetFirstChild()->GetMove();
+	currentNode = currentNode->GetFirstChild();
 	std::cout << "Move picked: " << move << "\n";
 
 	return move;
