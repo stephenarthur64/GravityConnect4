@@ -71,10 +71,15 @@ private:
     Camera2D camera;
 
     std::map<Team, PlayerType> teamToType;
-    std::map<Difficulties, int> diffToDepth = {
+    std::map<Difficulties, int> diffToDepthMiniMax = {
         {Difficulties::Easy, 2},
-        {Difficulties::Medium, 5},
-        {Difficulties::Hard, 8}
+        {Difficulties::Medium, 4},
+        {Difficulties::Hard, 6}
+    };
+    std::map<Difficulties, int> diffToDepthMonteCarlo = {
+        {Difficulties::Easy, 100},
+        {Difficulties::Medium, 1000},
+        {Difficulties::Hard, 10000}
     };
 
     Tree tree;

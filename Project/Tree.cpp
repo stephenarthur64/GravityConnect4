@@ -5,10 +5,9 @@ Tree::Tree() : depth(0)
 {
 }
 
-void Tree::BuildTree(int t_depth, Board t_start, Team t_current, bool t_rotate)
+void Tree::BuildTree(Board t_start, Team t_current, bool t_rotate)
 {
 	ResetTree();
-	depth = t_depth;
 
 	Team previousPlayer = Team::None;
 	if (t_current == Team::Red)
@@ -49,9 +48,9 @@ void Tree::IncrementGameState(int t_playerMove)
 	}
 }
 
-int Tree::GetMiniMaxMove(Team t_team)
+int Tree::GetMiniMaxMove(int t_depth, Team t_team)
 {
-	int currentDepth = 5;
+	int currentDepth = t_depth;
 	int bestMove = -1;
 	int bestScore = -9999999;
 
@@ -129,13 +128,13 @@ int Tree::MiniMax(std::shared_ptr<Node> t_node, int t_depth, bool t_max, Team t_
 	}
 }
 
-int Tree::GetMonteCarloMove()
+int Tree::GetMonteCarloMove(int t_depth)
 {
 	int move = 0;
 
 	int currentDepth = 0;
 
-	while (currentDepth < 10000)
+	while (currentDepth < t_depth)
 	{
 		currentNode->CalculateAllUTC();
 		currentNode->SortChildrenByUCT();

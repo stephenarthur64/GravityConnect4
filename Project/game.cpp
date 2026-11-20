@@ -114,7 +114,7 @@ void Game::StartGame()
 
     currentState = GameStates::Game;
 
-    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer, rotationOn);
+    tree.BuildTree(board, currentPlayer, rotationOn);
 }
 
 void Game::ResetGame()
@@ -134,11 +134,11 @@ int Game::GetAIMove()
 
     if (teamToType[currentPlayer] == PlayerType::MiniMax)
     {
-        move = tree.GetMiniMaxMove(currentPlayer);
+        move = tree.GetMiniMaxMove(diffToDepthMiniMax[difficulty], currentPlayer);
     }
     else if (teamToType[currentPlayer] == PlayerType::MonteCarlo)
     {
-        move = tree.GetMonteCarloMove();
+        move = tree.GetMonteCarloMove(diffToDepthMonteCarlo[difficulty]);
     }
 
     return move;
