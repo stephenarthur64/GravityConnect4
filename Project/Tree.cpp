@@ -26,6 +26,28 @@ void Tree::ResetTree()
 	startNode.ClearChildren();
 }
 
+void Tree::IncrementGameState(int t_playerMove)
+{
+	std::shared_ptr<Node> nextMove = currentNode->FindChildByMove(t_playerMove);
+	if (nextMove != nullptr)
+	{
+		currentNode = nextMove;
+	}
+	else
+	{
+		if (currentNode->AddChild(t_playerMove))
+		{
+			currentNode = currentNode->FindChildByMove(t_playerMove);
+		}
+		else
+		{
+			std::cout << "add child failed";
+			return;
+		}
+
+	}
+}
+
 int Tree::GetMiniMaxMove(Team t_team)
 {
 	int currentDepth = 4;
@@ -101,21 +123,11 @@ int Tree::MiniMax(std::shared_ptr<Node> t_node, int t_depth, bool t_max, Team t_
 	}
 }
 
-int Tree::GetMonteCarloMove(int t_lastPlayerMove)
+int Tree::GetMonteCarloMove()
 {
 	int move = 0;
 
 	int currentDepth = 0;
-	std::shared_ptr<Node> nextMove = currentNode->FindChildByMove(t_lastPlayerMove);
-	if (nextMove != nullptr)
-	{
-		currentNode = nextMove;
-	}
-	else
-	{
-		currentNode->AddChild(t_lastPlayerMove);
-		currentNode = currentNode->FindChildByMove(t_lastPlayerMove);
-	}
 
 	while (currentDepth < 1000)
 	{

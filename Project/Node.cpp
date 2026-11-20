@@ -170,7 +170,11 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 			else if (possibleMoves[nextMove] == 1)
 			{
 				childMade = AddChild(nextMove);
-				result = children.back()->SimulationMonteCarlo(t_originalTeam);
+
+				if (childMade)
+				{
+					result = children.back()->SimulationMonteCarlo(t_originalTeam);
+				}
 			}
 		}
 	}
