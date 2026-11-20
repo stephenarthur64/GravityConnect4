@@ -17,6 +17,7 @@ public:
 	void Update();
 	void Draw();
 	void SetDownDirection(Vector2 t_down) { downDirection = t_down; }
+	void Reset(Vector2 t_down, Team t_t = Team::None);
 
 	void SetPos(Vector2 t_pos) { position = t_pos; }
 	static void SetRadius(float t_r) { radius = t_r; }

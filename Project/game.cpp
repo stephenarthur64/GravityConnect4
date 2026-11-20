@@ -117,6 +117,17 @@ void Game::StartGame()
     tree.BuildTree(diffToDepth[difficulty], board, currentPlayer, rotationOn);
 }
 
+void Game::ResetGame()
+{
+    tree.ResetTree();
+    lastPlayerMove = -1;
+    currentState = GameStates::Game;
+    board.ClearBoard();
+    currentPlayer = Team::Red;
+    camera.rotation = 0.0f;
+    turn = 0;
+}
+
 int Game::GetAIMove()
 {
     int move = 1;
@@ -226,14 +237,23 @@ void Game::UpdateGame()
     }
 
     board.Update();
+    Team winner = board.WholeBoardCheck();
 
-    switch (currentPlayer)
+    switch (winner)
     {
+    case Team::None:
+        break;
     case Team::Red:
-        DrawText("Turn Red", GetScreenWidth() - 140.0f, 20, 20, RED);
+        currentState = GameStates::PostGame;
+        DrawText("Player Red wins!", (GetScreenWidth() / 2.0f) - 50.0f, GetScreenHeight() - 50, 30.0f, RED);
         break;
     case Team::Yellow:
-        DrawText("Turn Yellow", GetScreenWidth() - 140.0f, 20, 20, YELLOW);
+        currentState = GameStates::PostGame;
+        DrawText("Player Yellow wins!", (GetScreenWidth() / 2.0f) - 50.0f, GetScreenHeight() - 50, 30.0f, YELLOW);
+        break;
+    case Team::Draw:
+        currentState = GameStates::PostGame;
+        DrawText("It's a Draw!", (GetScreenWidth() / 2.0f) - 50.0f, GetScreenHeight() - 50, 30.0f, BLUE);
         break;
     default:
         break;
@@ -270,8 +290,35 @@ bool Game::RotateCamera()
 
 void Game::DrawPostGame()
 {
+    BeginMode2D(camera);
+
+    board.Draw();
+
+    EndMode2D();
+
+    if (GuiButton({ 200.0f, GetScreenHeight() - 50.0f, 60.0f, 30.0f }, "Replay"))
+    {
+        ResetGame();
+        StartGame();
+    }
+    if (GuiButton({ 300.0f, GetScreenHeight() - 50.0f, 100.0f, 30.0f }, "Main Menu"))
+    {
+        ResetGame();
+        currentState = GameStates::PreGame;
+    }
 }
 
 void Game::UpdatePostGame()
 {
+    switch (currentPlayer)
+    {
+    case Team::Red:
+        DrawText("Turn Red", GetScreenWidth() - 140.0f, 20, 20, RED);
+        break;
+    case Team::Yellow:
+        DrawText("Turn Yellow", GetScreenWidth() - 140.0f, 20, 20, YELLOW);
+        break;
+    default:
+        break;
+    }
 }
