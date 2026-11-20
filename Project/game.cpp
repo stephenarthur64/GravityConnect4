@@ -114,7 +114,7 @@ void Game::StartGame()
 
     currentState = GameStates::Game;
 
-    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer);
+    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer, rotationOn);
 }
 
 int Game::GetAIMove()
@@ -138,37 +138,48 @@ int Game::GetAIMove()
 void Game::DrawGame()
 {
     board.DrawUi();
-
-    BeginMode2D(camera);
-
-    board.Draw();
-
-    EndMode2D();
+    switch (rotationOn)
+    {
+    case true:
+        DrawText("Rotating: On", 10, GetScreenHeight() - 30, 30, GREEN);
+        break;
+    case false:
+        DrawText("Rotating: Off", 10, GetScreenHeight() - 30, 30, RED);
+        break;
+    default:
+        break;
+    }
 
     int buttonStart = 0;
     if (board.GetDirection() == Directions::Left || board.GetDirection() == Directions::Right)
         buttonStart = 1;
 
     // Placing past this point
-    if (camRotating)
-        return;
-
-    if (teamToType[currentPlayer] == PlayerType::Player)
+    if (!camRotating)
     {
-        for (int i = buttonStart; i < 7; i++)
+        if (teamToType[currentPlayer] == PlayerType::Player)
         {
-            if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
+            for (int i = buttonStart; i < 7; i++)
             {
-                placed = board.PlaceChip(i, currentPlayer);
-                lastPlayerMove = i;
+                if (GuiButton({ 80.0f + (90.0f * i), 30.0f, 60.0f, 30.0f }, "Drop"))
+                {
+                    placed = board.PlaceChip(i, currentPlayer);
+                    lastPlayerMove = i;
+                }
             }
         }
+        else
+        {
+            int chosen = GetAIMove();
+            placed = board.PlaceChip(chosen, currentPlayer);
+        }
     }
-    else
-    {
-        int chosen = GetAIMove();
-        placed = board.PlaceChip(chosen, currentPlayer);
-    }
+
+    BeginMode2D(camera);
+
+    board.Draw();
+
+    EndMode2D();
 }
 
 void Game::UpdateGame()
@@ -204,6 +215,7 @@ void Game::UpdateGame()
     if (IsKeyReleased(KEY_Q))
     {
         rotationOn = !rotationOn;
+        board.ToggleRotating();
     }
 
     board.Update();

@@ -13,6 +13,8 @@ public:
 	void SetHeuristic(float t_h) { heuristic = t_h; }
 	void ClearChildren() { children.clear(); }
 
+	void SetRotation(bool t_rotate) { rotating = t_rotate; }
+
 	bool HasChildren() const { return !children.empty(); }
 	const std::vector<std::shared_ptr<Node>>& GetChildren() const { return children; }
 
@@ -48,5 +50,6 @@ private:
 	int visits = 0;
 	float UTC = INFINITY;
 	int possibleMoves[7] = {};
+	bool rotating = true;
 };
 

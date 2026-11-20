@@ -164,6 +164,11 @@ bool Board::PlaceChip(int t_slot, Team t_team)
 
 void Board::Rotate()
 {
+	if (!rotating)
+	{
+		return;
+	}
+
 	directionIndex++;
 
 	if (directionIndex >= DIRECTIONS_MAX)

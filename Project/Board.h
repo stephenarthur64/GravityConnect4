@@ -31,7 +31,10 @@ public:
 	Directions GetDirection() const { return currentDirection; }
 	Team WholeBoardCheck();
 
+	void ToggleRotating() { rotating = !rotating; }
+
 	int Evaluate(Team t_team);
+	Directions currentDirection = Directions::Down;
 
 private:
 	Texture2D texture;
@@ -59,7 +62,6 @@ private:
 	int directionIndex = 0;
 	static const int DIRECTIONS_MAX = 4;
 	Vector2 allDirections[DIRECTIONS_MAX] = { {0.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, -1.0f}, {-1.0f, 0.0f} };
-	Directions currentDirection = Directions::Down;
 
 	int rowStart = 0;
 	int colStart = 0;
@@ -70,5 +72,7 @@ private:
 	static const int WIN_CONDITION = 4;
 
 	Rectangle rect;
+
+	bool rotating = true;
 };
 

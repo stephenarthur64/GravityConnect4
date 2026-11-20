@@ -6,7 +6,7 @@ class Tree
 {
 public:
 	Tree();
-	void BuildTree(int t_depth, Board t_start, Team t_current);
+	void BuildTree(int t_depth, Board t_start, Team t_current, bool t_rotate);
 	void ResetTree();
 	void IncrementGameState(int t_playerMove);
 

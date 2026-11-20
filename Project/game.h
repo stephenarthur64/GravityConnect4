@@ -64,7 +64,7 @@ private:
     Board board;
     Team currentPlayer = Team::Red;
     int turn = 0;
-    bool rotationOn = true;
+    bool rotationOn = false;
     bool placed;
 
     Camera2D camera;

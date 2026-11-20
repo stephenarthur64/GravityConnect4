@@ -5,7 +5,7 @@ Tree::Tree() : depth(0)
 {
 }
 
-void Tree::BuildTree(int t_depth, Board t_start, Team t_current)
+void Tree::BuildTree(int t_depth, Board t_start, Team t_current, bool t_rotate)
 {
 	ResetTree();
 	depth = t_depth;
@@ -17,6 +17,7 @@ void Tree::BuildTree(int t_depth, Board t_start, Team t_current)
 		previousPlayer = Team::Red;
 
 	startNode.SetBoard(t_start, previousPlayer, 0);
+	startNode.SetRotation(t_rotate);
 	startNode.GenerateChildren();
 	currentNode = std::make_shared<Node>(startNode);
 }
@@ -129,8 +130,9 @@ int Tree::GetMonteCarloMove()
 
 	int currentDepth = 0;
 
-	while (currentDepth < 1000)
+	while (currentDepth < 10000)
 	{
+		currentNode->CalculateAllUTC();
 		currentNode->SortChildrenByUCT();
 
 		currentNode->visit();
@@ -139,6 +141,7 @@ int Tree::GetMonteCarloMove()
 		currentDepth++;
 	}
 
+	currentNode->CalculateAllUTC();
 	currentNode->SortChildrenByUCT();
 	move = currentNode->GetFirstChild()->GetMove();
 	currentNode = currentNode->GetFirstChild();

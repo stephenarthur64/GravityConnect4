@@ -10,17 +10,13 @@ Node::Node()
 void Node::SetBoard(Board t_board, Team t_team, int t_turn)
 {
 	board = t_board;
+
 	currentPlayer = t_team;
 	if (t_turn == 0)
 	{
 		rootTeam = t_team;
 	}
 	currentTurn = t_turn;
-
-	if (t_turn % 4 == 0 && t_turn > 0)
-	{
-		board.Rotate();
-	}
 }
 
 void Node::GenerateChildren()
@@ -52,8 +48,13 @@ bool Node::AddChild(int t_move)
 	std::shared_ptr<Node> child = std::make_shared<Node>();
 
 	child->SetBoard(board, nextTeam, currentTurn + 1);
+	child->SetRotation(rotating);
 	if (child->board.PlaceChip(t_move, nextTeam))
 	{
+		if (child->currentTurn % 4 == 0 && rotating)
+		{
+			child->board.Rotate();
+		}
 		child->parent = this;
 		child->moveUsed = t_move;
 		child->rootTeam = rootTeam;
@@ -91,8 +92,8 @@ void Node::CalculateUTC()
 
 	if (visits > 0 && parent->visits > 0)
 	{
-		exploitation = wins / visits;
-		exploration = sqrt((log(parent->visits) / visits));
+		exploitation = (double)wins / visits;
+		exploration = sqrt((log((double)parent->visits) / visits));
 	}
 
 	UTC = exploitation + (explorationConstant * exploration);
@@ -123,7 +124,6 @@ void Node::ProcessNodeMonteCarlo()
 	int simulationResult = SimulationMonteCarlo(rootTeam); // 0 for loss / draw, 1 for win
 	visits++;
 	wins += simulationResult;
-	CalculateUTC();
 }
 
 int Node::SimulationMonteCarlo(Team t_originalTeam)
@@ -169,11 +169,7 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 			else if (possibleMoves[nextMove] == 1)
 			{
 				childMade = AddChild(nextMove);
-
-				if (childMade)
-				{
-					result = children.back()->SimulationMonteCarlo(t_originalTeam);
-				}
+				result = children.back()->SimulationMonteCarlo(t_originalTeam);
 			}
 		}
 	}
@@ -190,9 +186,9 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 	if (result == 1)
 	{
 		wins++;
-		CalculateUTC();
 	}
 
+	//CalculateUTC();
 	return result;
 
 }
@@ -206,6 +202,10 @@ void Node::FindAllPossibleMoves()
 		if (dummy.PlaceChip(i, currentPlayer))
 		{
 			possibleMoves[i] = 1;
+		}
+		else
+		{
+			possibleMoves[i] = 0;
 		}
 		dummy = board;
 	}
