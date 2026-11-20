@@ -63,7 +63,7 @@ private:
     Board board;
     Team currentPlayer = Team::Red;
     int turn = 0;
-    bool rotating = true;
+    bool rotating = false;
     bool placed;
 
     Camera2D camera;
@@ -76,4 +76,5 @@ private:
     };
 
     Tree tree;
+    int lastPlayerMove = 0;
 };

@@ -119,7 +119,7 @@ bool Board::PlaceChip(int t_slot, Team t_team)
 		break;
 	}
 
-	int lastX = tempX;
+	int lastX = tempX; 
 	int lastY = tempY;
 
 	while (ValidChipPlacement(tempX, tempY))
@@ -134,7 +134,13 @@ bool Board::PlaceChip(int t_slot, Team t_team)
 				//if (CheckForWin({ (float)lastX, (float)lastY }, t_team))
 				//	std::cout << "WIN FOUND: " << static_cast<int>(t_team) << "\n";
 			}
-			return placed;
+			lastX = tempX;
+			lastY = tempY;
+
+			tempX += downDirection.x;
+			tempY += downDirection.y;
+
+			continue;
 		}
 
 		if (!ValidChipPlacement(tempX + downDirection.x, tempY + downDirection.y))
