@@ -28,7 +28,7 @@ void Tree::ResetTree()
 
 int Tree::GetMiniMaxMove(Team t_team)
 {
-	int currentDepth = 5;
+	int currentDepth = 4;
 	int bestMove = -1;
 	int bestScore = -9999999;
 
