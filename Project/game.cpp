@@ -114,7 +114,7 @@ void Game::StartGame()
 
     currentState = GameStates::Game;
 
-    tree.BuildTree(diffToDepth[difficulty], board, Team::Yellow);
+    tree.BuildTree(diffToDepth[difficulty], board, currentPlayer);
 }
 
 int Game::GetAIMove()
@@ -136,6 +136,13 @@ int Game::GetAIMove()
 void Game::DrawGame()
 {
     board.DrawUi();
+
+    BeginMode2D(camera);
+
+    board.Draw();
+
+    EndMode2D();
+
     int buttonStart = 0;
     if (board.GetDirection() == Directions::Left || board.GetDirection() == Directions::Right)
         buttonStart = 1;
@@ -160,13 +167,6 @@ void Game::DrawGame()
         int chosen = GetAIMove();
         placed = board.PlaceChip(chosen, currentPlayer);
     }
-
-    BeginMode2D(camera);
-
-    board.Draw();
-
-    EndMode2D();
-
 }
 
 void Game::UpdateGame()

@@ -5,7 +5,7 @@ Tree::Tree() : depth(0)
 {
 }
 
-void Tree::BuildTree(int t_depth, Board t_start, Team t_current, int t_currentTurn)
+void Tree::BuildTree(int t_depth, Board t_start, Team t_current)
 {
 	ResetTree();
 	depth = t_depth;
@@ -16,7 +16,7 @@ void Tree::BuildTree(int t_depth, Board t_start, Team t_current, int t_currentTu
 	else if (t_current == Team::Yellow)
 		previousPlayer = Team::Red;
 
-	startNode.SetBoard(t_start, previousPlayer, t_currentTurn);
+	startNode.SetBoard(t_start, previousPlayer, 0);
 	startNode.GenerateChildren();
 	currentNode = std::make_shared<Node>(startNode);
 }
