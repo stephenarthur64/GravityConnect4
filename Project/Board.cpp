@@ -60,8 +60,6 @@ void Board::Draw()
 			board[row][col].Draw();
 		}
 	}
-
-	DrawCircleV(directionIndicator, 10.0f, RED);
 }
 
 void Board::DrawUi()
@@ -83,6 +81,27 @@ void Board::DrawUi()
 	default:
 		break;
 	}
+}
+
+void Board::ClearBoard()
+{
+	downDirection = { 0.0f, 1.0f };
+
+	for (int col = 0; col < COL_MAX; col++)
+	{
+		for (int row = 0; row < ROW_MAX; row++)
+		{
+			board[col][row].Reset(downDirection);
+		}
+	}
+
+	indexDirectionX = -1;
+	indexDirectionY = -1;
+	rowStart = ROW_MAX - 1;
+	colStart = COL_MAX - 1;
+	directionIndicator = { GetScreenWidth() / 2.0f, GetScreenHeight() - 20.0f };
+	currentDirection = Directions::Down;
+	directionIndex = 0;
 }
 
 bool Board::ValidChipPlacement(int t_x, int t_y)

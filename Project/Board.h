@@ -20,6 +20,8 @@ public:
 	void Draw();
 	void DrawUi();
 
+	void ClearBoard();
+
 	bool ValidChipPlacement(int t_x, int t_y);
 	bool RowLimitCheck(int t_row);
 	bool ColLimitCheck(int t_col);

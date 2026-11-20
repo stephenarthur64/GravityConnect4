@@ -10,8 +10,7 @@ void Chip::Init(Vector2 t_down, Team t_t)
 {
 	texture = LoadTexture("Resources/Chip.png");
 
-	downDirection = t_down;
-	team = t_t;
+	Reset(t_down, t_t);
 }
 
 void Chip::Update()
@@ -33,4 +32,10 @@ void Chip::Draw()
 		//DrawCircleV(position, radius, YELLOW);
 		DrawTexturePro(texture, source, dest, origin, 0.0f, YELLOW);
 	}
+}
+
+void Chip::Reset(Vector2 t_down, Team t_t)
+{
+	downDirection = t_down;
+	team = t_t;
 }

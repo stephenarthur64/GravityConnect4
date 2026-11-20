@@ -43,6 +43,7 @@ private:
     PlayerType player2TypeChosen = PlayerType::Player;
 
     void StartGame();
+    void ResetGame();
 
     int GetAIMove();
 
@@ -64,7 +65,7 @@ private:
     Board board;
     Team currentPlayer = Team::Red;
     int turn = 0;
-    bool rotationOn = false;
+    bool rotationOn = true;
     bool placed;
 
     Camera2D camera;
