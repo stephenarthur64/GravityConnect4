@@ -121,13 +121,15 @@ int Game::GetAIMove()
 {
     int move = 1;
 
+    tree.IncrementGameState(lastPlayerMove);
+
     if (teamToType[currentPlayer] == PlayerType::MiniMax)
     {
         move = tree.GetMiniMaxMove(currentPlayer);
     }
     else if (teamToType[currentPlayer] == PlayerType::MonteCarlo)
     {
-        move = tree.GetMonteCarloMove(lastPlayerMove);
+        move = tree.GetMonteCarloMove();
     }
 
     return move;

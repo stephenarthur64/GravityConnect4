@@ -16,6 +16,11 @@ void Node::SetBoard(Board t_board, Team t_team, int t_turn)
 		rootTeam = t_team;
 	}
 	currentTurn = t_turn;
+
+	if (t_turn % 4 == 0 && t_turn > 0)
+	{
+		board.Rotate();
+	}
 }
 
 void Node::GenerateChildren()
@@ -164,7 +169,11 @@ int Node::SimulationMonteCarlo(Team t_originalTeam)
 			else if (possibleMoves[nextMove] == 1)
 			{
 				childMade = AddChild(nextMove);
-				result = children.back()->SimulationMonteCarlo(t_originalTeam);
+
+				if (childMade)
+				{
+					result = children.back()->SimulationMonteCarlo(t_originalTeam);
+				}
 			}
 		}
 	}
