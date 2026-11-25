@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "game.h"
 #include <reasings.h>
+#include <string>
 
 void Game::Init()
 {
@@ -55,7 +56,8 @@ void Game::DrawPreGame()
     float fontSize = GetScreenHeight() * 0.05f;
 
     // Minimax difficulty
-    DrawText("MiniMax Difficulty", buttonRect.x + 50, buttonRect.y, fontSize, WHITE);
+    std::string difficultyTextMiniMax = "MiniMax Difficulty - " + std::to_string(static_cast<int>(difficultyMiniMax));
+    DrawText(difficultyTextMiniMax.c_str(), buttonRect.x + 35, buttonRect.y, fontSize, WHITE);
 
     buttonRect.y += fontSize;
     if (GuiButton(buttonRect, "Easy"))
@@ -75,7 +77,8 @@ void Game::DrawPreGame()
 
     // Monte Carlo difficulty
     buttonRect.y += buttonRect.height;
-    DrawText("MonteCarlo Difficulty", buttonRect.x + 50, buttonRect.y, fontSize, WHITE);
+    std::string difficultyTextMonteCarlo = "MonteCarlo Difficulty - " + std::to_string(static_cast<int>(difficultyMonteCarlo));
+    DrawText(difficultyTextMonteCarlo.c_str(), buttonRect.x + 5, buttonRect.y, fontSize, WHITE);
 
     buttonRect.y += fontSize;
     if (GuiButton(buttonRect, "Easy"))
@@ -236,19 +239,6 @@ void Game::DrawGame()
 
 void Game::UpdateGame()
 {
-    if (turn % 4 == 0 && turn > 0)
-    {
-        if (rotationOn && !camRotating && canRotate)
-        {
-            StartCameraRotation();
-        }
-    }
-
-    if (RotateCamera())
-    {
-        board.Rotate();
-    }
-
     if (placed)
     {
         turn++;
@@ -262,6 +252,19 @@ void Game::UpdateGame()
             currentPlayer = Team::Red;
         }
         placed = false;
+    }
+
+    if (turn % 4 == 0 && turn > 0)
+    {
+        if (rotationOn && !camRotating && canRotate)
+        {
+            StartCameraRotation();
+        }
+    }
+
+    if (RotateCamera())
+    {
+        board.Rotate();
     }
 
     if (IsKeyReleased(KEY_Q))
