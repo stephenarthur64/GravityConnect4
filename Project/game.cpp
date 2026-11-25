@@ -256,16 +256,17 @@ void Game::UpdateGame()
 
     if (turn % 4 == 0 && turn > 0)
     {
-        if (rotationOn && !camRotating && canRotate)
-        {
-            StartCameraRotation();
-        }
+        board.Rotate();
+        //if (rotationOn && !camRotating && canRotate)
+        //{
+        //    StartCameraRotation();
+        //}
     }
 
-    if (RotateCamera())
-    {
-        board.Rotate();
-    }
+    //if (RotateCamera())
+    //{
+    //    board.Rotate();
+    //}
 
     if (IsKeyReleased(KEY_Q))
     {
