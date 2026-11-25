@@ -31,7 +31,8 @@ public:
     void Update();
 
 private:
-    Difficulties difficulty = Difficulties::Easy;
+    Difficulties difficultyMiniMax = Difficulties::Easy;
+    Difficulties difficultyMonteCarlo = Difficulties::Easy;
 
     void DrawPreGame();
     void UpdatePreGame();

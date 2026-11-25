@@ -48,28 +48,58 @@ void Game::DrawPreGame()
 {
     Rectangle buttonRect;
     buttonRect.width = (float)GetScreenWidth() / 2.0f;
-    buttonRect.height = GetScreenHeight() * 0.33f;
+    buttonRect.height = GetScreenHeight() / 7.0f;
     buttonRect.x = 0.0f;
     buttonRect.y = 0.0f;
+
+    float fontSize = GetScreenHeight() * 0.05f;
+
+    // Minimax difficulty
+    DrawText("MiniMax Difficulty", buttonRect.x + 50, buttonRect.y, fontSize, WHITE);
+
+    buttonRect.y += fontSize;
     if (GuiButton(buttonRect, "Easy"))
     {
-        difficulty = Difficulties::Easy;
+        difficultyMiniMax = Difficulties::Easy;
     }
-
-    buttonRect.y += GetScreenHeight() * 0.33f;
+    buttonRect.y += buttonRect.height;
     if (GuiButton(buttonRect, "Medium"))
     {
-        difficulty = Difficulties::Medium;
+        difficultyMiniMax = Difficulties::Medium;
     }
-
-    buttonRect.y += GetScreenHeight() * 0.33f;
+    buttonRect.y += buttonRect.height;
     if (GuiButton(buttonRect, "Hard"))
     {
-        difficulty = Difficulties::Hard;
+        difficultyMiniMax = Difficulties::Hard;
     }
 
-    buttonRect.x += buttonRect.width;
-    if (GuiButton(buttonRect, "Start"))
+    // Monte Carlo difficulty
+    buttonRect.y += buttonRect.height;
+    DrawText("MonteCarlo Difficulty", buttonRect.x + 50, buttonRect.y, fontSize, WHITE);
+
+    buttonRect.y += fontSize;
+    if (GuiButton(buttonRect, "Easy"))
+    {
+        difficultyMonteCarlo = Difficulties::Easy;
+    }
+    buttonRect.y += buttonRect.height;
+    if (GuiButton(buttonRect, "Medium"))
+    {
+        difficultyMonteCarlo = Difficulties::Medium;
+    }
+    buttonRect.y += buttonRect.height;
+    if (GuiButton(buttonRect, "Hard"))
+    {
+        difficultyMonteCarlo = Difficulties::Hard;
+    }
+
+    // Start button
+    Rectangle startRect;
+    startRect.width = (float)GetScreenWidth() / 2.0f;
+    startRect.height = GetScreenHeight() * 0.33f;
+    startRect.x = startRect.width;
+    startRect.y = GetScreenHeight() * 0.66f;
+    if (GuiButton(startRect, "Start"))
     {
         StartGame();
     }
@@ -136,11 +166,11 @@ int Game::GetAIMove()
 
     if (teamToType[currentPlayer] == PlayerType::MiniMax)
     {
-        move = tree.GetMiniMaxMove(diffToDepthMiniMax[difficulty], currentPlayer);
+        move = tree.GetMiniMaxMove(diffToDepthMiniMax[difficultyMiniMax], currentPlayer);
     }
     else if (teamToType[currentPlayer] == PlayerType::MonteCarlo)
     {
-        move = tree.GetMonteCarloMove(diffToDepthMonteCarlo[difficulty]);
+        move = tree.GetMonteCarloMove(diffToDepthMonteCarlo[difficultyMonteCarlo]);
     }
 
     return move;
