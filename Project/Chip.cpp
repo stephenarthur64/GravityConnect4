@@ -15,6 +15,7 @@ void Chip::Init(Vector2 t_down, Team t_t)
 
 void Chip::Update()
 {
+	//particles.Update();
 }
 
 void Chip::Draw()
@@ -32,10 +33,32 @@ void Chip::Draw()
 		//DrawCircleV(position, radius, YELLOW);
 		DrawTexturePro(texture, source, dest, origin, 0.0f, YELLOW);
 	}
+
+	//particles.Draw();
 }
 
 void Chip::Reset(Vector2 t_down, Team t_t)
 {
 	downDirection = t_down;
 	team = t_t;
+}
+
+void Chip::SetPos(Vector2 t_pos)
+{
+	position = t_pos;
+	//particles.SetValues(position, 360, 360);
+}
+
+void Chip::SetTeam(Team t_t)
+{
+	team = t_t;
+	//particles.ClearColors();
+
+	//if (team == Team::Red)
+	//	particles.AddColor(RED);
+	//else if (team == Team::Yellow)
+	//	particles.AddColor(YELLOW);
+
+
+	//particles.Spawn();
 }

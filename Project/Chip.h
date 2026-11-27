@@ -2,6 +2,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include "ParticleSpawner.h"
+
 enum class Team {
 	None = -1,
 	Red,
@@ -19,12 +21,12 @@ public:
 	void SetDownDirection(Vector2 t_down) { downDirection = t_down; }
 	void Reset(Vector2 t_down, Team t_t = Team::None);
 
-	void SetPos(Vector2 t_pos) { position = t_pos; }
+	void SetPos(Vector2 t_pos);
 	static void SetRadius(float t_r) { radius = t_r; }
 	static float GetRadius() { return radius; }
 
 	Team GetTeam() const { return team; }
-	void SetTeam(Team t_t) { team = t_t; }
+	void SetTeam(Team t_t);
 
 private:
 	Texture2D texture;
@@ -33,5 +35,7 @@ private:
 	Vector2 downDirection;
 	static float radius;
 	Team team;
+
+	// ParticleSpawner particles;
 };
 
